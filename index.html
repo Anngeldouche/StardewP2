@@ -31,7 +31,7 @@
         <p>Bienvenue sur la deuxième partie de StardewPote !</p>
 
         <div class="character-display" id="character-display">
-            <!-- L'image du personnage sera injectée ici -->
+            <!-- Les images des personnages seront injectées ici -->
         </div>
     </div>
 
@@ -42,89 +42,66 @@
 
         const characterDisplay = document.getElementById('character-display');
 
-        // Fonction pour récupérer les paramètres d'URL (ex: personnage choisi)
-        function getUrlParameter(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        const character = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        if (character && image) {
-            // Créer l'élément image
-            const imgElement = document.createElement('img');
-            imgElement.src = image;
-            imgElement.id = 'character-image';
-            imgElement.alt = `Personnage ${character}`;
-            characterDisplay.appendChild(imgElement);
-
-            // Récupérer les coordonnées à partir de Supabase si elles existent
-            async function fetchCoordinates() {
-                const { data, error } = await supabase
-                    .from('characters')
-                    .select('x, y')
-                    .eq('id', character)
-                    .single();
-
-                if (error) {
-                    console.error('Erreur en récupérant les coordonnées : ', error);
-                } else {
-                    imgElement.style.left = `${data.x}px`;
-                    imgElement.style.top = `${data.y}px`;
-                }
-            }
-            fetchCoordinates();
-
-            // Fonction pour déplacer l'image
-            let offsetX, offsetY;
-            imgElement.addEventListener('mousedown', (event) => {
-                offsetX = event.clientX - imgElement.getBoundingClientRect().left;
-                offsetY = event.clientY - imgElement.getBoundingClientRect().top;
-
-                const onMouseMove = (event) => {
-                    const newX = event.clientX - offsetX;
-                    const newY = event.clientY - offsetY;
-                    imgElement.style.left = `${newX}px`;
-                    imgElement.style.top = `${newY}px`;
-
-                    // Mettre à jour les coordonnées dans Supabase
-                    updatePositionInSupabase(newX, newY);
-                };
-
-                const onMouseUp = () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                };
-
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-            });
-
-            // Fonction pour mettre à jour les coordonnées dans Supabase
-            async function updatePositionInSupabase(x, y) {
-                const { error } = await supabase
-                    .from('characters')
-                    .upsert([
-                        { id: character, x: x, y: y }
-                    ]);
-                if (error) console.error("Erreur de mise à jour dans Supabase :", error);
-            }
-
-            // Écouter les changements en temps réel sur la position du personnage
-            supabase
+        // Fonction pour récupérer les personnages depuis Supabase
+        async function fetchCharacters() {
+            const { data, error } = await supabase
                 .from('characters')
-                .on('UPDATE', (payload) => {
-                    if (payload.new.id === character) {
-                        imgElement.style.left = `${payload.new.x}px`;
-                        imgElement.style.top = `${payload.new.y}px`;
-                    }
-                })
-                .subscribe();
+                .select('id, x, y');
 
-        } else {
-            characterDisplay.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+            if (error) {
+                console.error('Erreur en récupérant les personnages : ', error);
+                return;
+            }
+
+            data.forEach(character => {
+                // Créer l'élément image pour chaque personnage
+                const imgElement = document.createElement('img');
+                imgElement.src = `https://example.com/images/${character.id}.png`; // Remplace par l'URL correcte de l'image
+                imgElement.id = `character-image-${character.id}`;
+                imgElement.alt = `Personnage ${character.id}`;
+                imgElement.style.left = `${character.x}px`;
+                imgElement.style.top = `${character.y}px`;
+                characterDisplay.appendChild(imgElement);
+
+                // Fonction pour déplacer l'image
+                let offsetX, offsetY;
+                imgElement.addEventListener('mousedown', (event) => {
+                    offsetX = event.clientX - imgElement.getBoundingClientRect().left;
+                    offsetY = event.clientY - imgElement.getBoundingClientRect().top;
+
+                    const onMouseMove = (event) => {
+                        const newX = event.clientX - offsetX;
+                        const newY = event.clientY - offsetY;
+                        imgElement.style.left = `${newX}px`;
+                        imgElement.style.top = `${newY}px`;
+
+                        // Mettre à jour les coordonnées dans Supabase
+                        updatePositionInSupabase(character.id, newX, newY);
+                    };
+
+                    const onMouseUp = () => {
+                        window.removeEventListener('mousemove', onMouseMove);
+                        window.removeEventListener('mouseup', onMouseUp);
+                    };
+
+                    window.addEventListener('mousemove', onMouseMove);
+                    window.addEventListener('mouseup', onMouseUp);
+                });
+            });
         }
+
+        // Fonction pour mettre à jour les coordonnées dans Supabase
+        async function updatePositionInSupabase(id, x, y) {
+            const { error } = await supabase
+                .from('characters')
+                .upsert([
+                    { id: id, x: x, y: y }
+                ]);
+            if (error) console.error("Erreur de mise à jour dans Supabase :", error);
+        }
+
+        // Appeler la fonction pour récupérer les personnages
+        fetchCharacters();
     </script>
 </body>
 </html>
