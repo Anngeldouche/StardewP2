@@ -96,6 +96,8 @@
         // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
+        let currentDirection = 'front'; // Position initiale : avant (front)
+
         if (characterId && image) {
             // Obtenir le nom du copain en fonction de l'ID
             const characterName = copains[characterId] || "Copain inconnu";
@@ -109,7 +111,34 @@
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
 
-        // Fonction pour déplacer le personnage
+        // Fonction pour changer l'image en fonction de la direction
+        function updateCharacterImage() {
+            const characterImage = document.getElementById('character-image');
+            let imagePath;
+
+            // Selon la direction, choisir l'image appropriée
+            switch (currentDirection) {
+                case 'front':
+                    imagePath = 'https://github.com/Anngeldouche/StardewP2/blob/main/Copainbits/Copains8B(1).png';
+                    break;
+                case 'back':
+                    imagePath = 'https://github.com/Anngeldouche/StardewP2/blob/main/Copainbits/Copains8B(1)B.png';
+                    break;
+                case 'left':
+                    imagePath = 'https://github.com/Anngeldouche/StardewP2/blob/main/Copainbits/Copains8B(1)G.png';
+                    break;
+                case 'right':
+                    imagePath = 'https://github.com/Anngeldouche/StardewP2/blob/main/Copainbits/Copains8B(1)D.png';
+                    break;
+                default:
+                    imagePath = 'https://github.com/Anngeldouche/StardewP2/blob/main/Copainbits/Copains8B(1).png'; // Image par défaut
+            }
+
+            // Mise à jour de l'image
+            characterImage.src = imagePath;
+        }
+
+        // Fonction de déplacement du personnage
         function moveCharacter(direction) {
             const characterImage = document.getElementById('character-image');
             if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
@@ -124,17 +153,26 @@
             switch (direction) {
                 case 'up':
                     characterImage.style.top = `${currentTop - step}px`;
+                    currentDirection = 'back'; // Image pour le dos
                     break;
                 case 'down':
                     characterImage.style.top = `${currentTop + step}px`;
+                    currentDirection = 'front'; // Image pour l'avant
                     break;
                 case 'left':
                     characterImage.style.left = `${currentLeft - step}px`;
+                    currentDirection = 'left'; // Image pour la gauche
                     break;
                 case 'right':
                     characterImage.style.left = `${currentLeft + step}px`;
+                    currentDirection = 'right'; // Image pour la droite
+                    break;
+                default:
+                    currentDirection = 'front'; // Si aucune direction définie, image par défaut
                     break;
             }
+
+            updateCharacterImage(); // Mise à jour de l'image après le déplacement
         }
 
         // Ajouter des événements pour les boutons
@@ -142,6 +180,33 @@
         document.getElementById('down').addEventListener('click', () => moveCharacter('down'));
         document.getElementById('left').addEventListener('click', () => moveCharacter('left'));
         document.getElementById('right').addEventListener('click', () => moveCharacter('right'));
+
+        // Déplacement en continu avec les touches directionnelles du clavier
+        let moveInterval;
+        window.addEventListener('keydown', (event) => {
+            if (moveInterval) return; // Si un mouvement est déjà en cours, ne pas répéter
+
+            switch (event.key) {
+                case 'ArrowUp':
+                    moveInterval = setInterval(() => moveCharacter('up'), 50);
+                    break;
+                case 'ArrowDown':
+                    moveInterval = setInterval(() => moveCharacter('down'), 50);
+                    break;
+                case 'ArrowLeft':
+                    moveInterval = setInterval(() => moveCharacter('left'), 50);
+                    break;
+                case 'ArrowRight':
+                    moveInterval = setInterval(() => moveCharacter('right'), 50);
+                    break;
+            }
+        });
+
+        window.addEventListener('keyup', () => {
+            clearInterval(moveInterval);
+            moveInterval = null;
+        });
+
     </script>
 </body>
 </html>
