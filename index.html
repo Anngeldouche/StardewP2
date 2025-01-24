@@ -102,14 +102,25 @@
         const character = getUrlParameter('character');
         const image = getUrlParameter('image');
 
+        // Dictionnaire des copains avec leurs messages de bienvenue
+        const copains = {
+            "1": "Angle",
+            "2": "Chim",
+            "3": "Zonzon",
+            "4": "Luc",
+            "5": "Mori"
+        };
+
         // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
         if (character && image) {
-            // Afficher le personnage sélectionné
+            const copainName = copains[character];
+
+            // Afficher le personnage avec le message de bienvenue
             displayElement.innerHTML = `
                 <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Vous avez choisi : ${character}</h2>
+                <h2>Bienvenue ${copainName}</h2>
             `;
 
             // Récupérer l'image et la rendre déplaçable
