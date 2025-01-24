@@ -198,6 +198,9 @@
 
         // Ajouter un écouteur pour les touches directionnelles du clavier
         window.addEventListener('keydown', (event) => {
+            // Empêche le défilement de la page
+            event.preventDefault();
+
             switch (event.key) {
                 case 'ArrowUp':
                     moveCharacter("up");
