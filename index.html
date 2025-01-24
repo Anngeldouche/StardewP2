@@ -6,88 +6,21 @@
     <link rel="stylesheet" href="pluginAssets/highlight.js/atom-one-light.css">
     <title>StardewPote P2</title>
     <style>
-        /* https://necolas.github.io/normalize.css/ */
-        html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}
-        article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}
-        pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}
-        b,strong{font-weight:bolder}small{font-size:80%}img{border-style:none}
+        html {
+            line-height: 1.15;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
 
         body {
+            margin: 0;
             font-size: 15px;
             color: #32373F;
             word-wrap: break-word;
             line-height: 1.6em;
             background-color: #ffffff;
             font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
-            padding-bottom: 0px;
-            padding-top: 0px;
-        }
-
-        kbd {
-            border: 1px solid rgb(220, 220, 220);
-            box-shadow: inset 0 -1px 0 rgb(220, 220, 220);
-            padding: 2px 4px;
-            border-radius: 3px;
-            background-color: rgb(243, 243, 243);
-        }
-
-        :root {
-            --scrollbar-size: 7px;
-        }
-
-        ::-webkit-scrollbar {
-            width: var(--scrollbar-size);
-            height: var(--scrollbar-size);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(100, 100, 100, 0.3); 
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: none;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(100, 100, 100, 0.7); 
-        }
-
-        #rendered-md > *:first-child {
-            margin-top: 0;
-            padding-top: 0;
-        }
-        
-        p, h1, h2, h3, h4, h5, h6, ul, table {
-            margin-top: .6em;
-            margin-bottom: 1.35em;
-            unicode-bidi: plaintext;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            line-height: 1.5em;
-        }
-
-        h1 {
-            font-size: 1.5em;
-            font-weight: bold;
-            border-bottom: 1px solid #dddddd;
-            padding-bottom: .3em;
-        }
-
-        h2 {
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-
-        h3 {
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        h4, h5, h6 {
-            font-size: 1em;
-            font-weight: bold;
+            padding: 20px;
         }
 
         .exported-note-title {
@@ -99,43 +32,62 @@
             border-bottom: 1px solid #dddddd;
         }
 
-        a {
-            color: #155BDA;
+        p, h1, h2, h3 {
+            margin-top: 0.6em;
+            margin-bottom: 1.35em;
         }
 
-        ul, ol {
-            padding-left: 0;
-            margin-left: 1.7em;
+        .character-display {
+            text-align: center;
+            margin-top: 20px;
         }
 
-        li {
-            margin-bottom: .4em;
+        .character-display img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
         }
 
-        .resource-icon {
-            display: inline-block;
-            position: relative;
-            top: 0.3em;
-            text-decoration: none;
-            width: 1.2em;
-            height: 1.4em;
-            margin-right: 0.4em;
-            background-color: #155BDA;
+        .character-display h2 {
+            margin-top: 10px;
+            color: #555;
         }
-
-        .fa-joplin {
-            /* Exemple d'icône personnalisée */
-            -webkit-mask: url("data:image/svg+xml;utf8,<svg ...></svg>");
-        }
-
-        /* Ajouter d'autres icônes comme .fa-file-image, .fa-file-pdf... */
     </style>
 </head>
 <body>
     <div class="exported-note">
         <div class="exported-note-title">StardewPote P2</div>
         <p>Bienvenue sur la deuxième partie de StardewPote!</p>
-        <!-- Ajoutez ici votre contenu -->
+
+        <!-- Section pour afficher les informations sur le personnage -->
+        <div class="character-display" id="character-display">
+            <!-- Contenu injecté par JavaScript -->
+        </div>
     </div>
+
+    <script>
+        // Fonction pour récupérer les paramètres d'URL
+        function getUrlParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        // Récupérer les informations sur le personnage
+        const character = getUrlParameter('character');
+
+        // Sélection de l'élément où afficher le personnage
+        const displayElement = document.getElementById('character-display');
+
+        if (character) {
+            // Afficher le personnage sélectionné
+            displayElement.innerHTML = `
+                <img src="https://raw.githubusercontent.com/Anngeldouche/StardewPotes/main/Copainbits/Copains8B(${character}).png" alt="Personnage sélectionné">
+                <h2>Vous avez choisi : ${character}</h2>
+            `;
+        } else {
+            // Si aucun personnage n'est passé dans l'URL
+            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+        }
+    </script>
 </body>
 </html>
