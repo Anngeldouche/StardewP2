@@ -139,22 +139,40 @@
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
 
+        let intervalId;
+
         // Ajouter des événements de clic pour la croix de déplacement
-        document.getElementById("up").addEventListener("click", function() {
-            moveCharacter("up");
+        document.getElementById("up").addEventListener("mousedown", function() {
+            intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
         });
 
-        document.getElementById("down").addEventListener("click", function() {
-            moveCharacter("down");
+        document.getElementById("down").addEventListener("mousedown", function() {
+            intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
         });
 
-        document.getElementById("left").addEventListener("click", function() {
-            moveCharacter("left");
+        document.getElementById("left").addEventListener("mousedown", function() {
+            intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
         });
 
-        document.getElementById("right").addEventListener("click", function() {
-            moveCharacter("right");
+        document.getElementById("right").addEventListener("mousedown", function() {
+            intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
         });
+
+        // Arrêter le déplacement lorsque le bouton est relâché
+        document.getElementById("up").addEventListener("mouseup", stopMoving);
+        document.getElementById("down").addEventListener("mouseup", stopMoving);
+        document.getElementById("left").addEventListener("mouseup", stopMoving);
+        document.getElementById("right").addEventListener("mouseup", stopMoving);
+
+        // Arrêter le déplacement lorsque le bouton est relâché
+        document.getElementById("up").addEventListener("mouseleave", stopMoving);
+        document.getElementById("down").addEventListener("mouseleave", stopMoving);
+        document.getElementById("left").addEventListener("mouseleave", stopMoving);
+        document.getElementById("right").addEventListener("mouseleave", stopMoving);
+
+        function stopMoving() {
+            clearInterval(intervalId); // Arrêter le déplacement continu
+        }
 
         // Fonction de déplacement du personnage
         function moveCharacter(direction) {
