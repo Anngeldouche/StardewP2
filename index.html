@@ -39,7 +39,9 @@
             height: 150px;
             border-radius: 50%;
             position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
-            cursor: pointer; /* Change le curseur lorsque l'image est cliquée */
+            top: 50%; /* Position initiale verticale */
+            left: 50%; /* Position initiale horizontale */
+            transform: translate(-50%, -50%);
         }
 
         .character-display h2 {
@@ -52,17 +54,18 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 50px;
+            grid-template-rows: 50px 50px 50px;
             gap: 10px;
+            justify-items: center;
+            align-items: center;
         }
 
         .joystick-btn {
             background-color: rgba(0, 0, 0, 0.6);
             color: white;
             border: none;
-            padding: 15px;
             font-size: 18px;
             width: 50px;
             height: 50px;
@@ -82,7 +85,7 @@
         </div>
     </div>
 
-    <!-- Crois de déplacement -->
+    <!-- Croix de déplacement -->
     <div id="joystick-container">
         <button id="up" class="joystick-btn">↑</button>
         <button id="left" class="joystick-btn">←</button>
@@ -122,34 +125,41 @@
                 <img src="${image}" alt="Personnage sélectionné" id="character-image" />
                 <h2>Bienvenue ${characterName}</h2>
             `;
-
-            // Récupérer l'image et la rendre déplaçable
-            const characterImage = document.getElementById('character-image');
-            let offsetX, offsetY;
-
-            characterImage.addEventListener('mousedown', (event) => {
-                offsetX = event.clientX - characterImage.getBoundingClientRect().left;
-                offsetY = event.clientY - characterImage.getBoundingClientRect().top;
-
-                const onMouseMove = (event) => {
-                    characterImage.style.left = `${event.clientX - offsetX}px`;
-                    characterImage.style.top = `${event.clientY - offsetY}px`;
-                };
-
-                const onMouseUp = () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                };
-
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-            });
         } else {
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
 
-        // Code pour le joystick et le déplacement du personnage
-        // Ajoutez vos événements ici si nécessaire
+        // Fonction pour déplacer le personnage
+        function moveCharacter(direction) {
+            const characterImage = document.getElementById('character-image');
+            const step = 10; // Distance de déplacement en pixels
+
+            // Obtenir la position actuelle
+            const currentTop = parseInt(window.getComputedStyle(characterImage).top, 10);
+            const currentLeft = parseInt(window.getComputedStyle(characterImage).left, 10);
+
+            // Déplacement en fonction de la direction
+            switch (direction) {
+                case 'up':
+                    characterImage.style.top = `${currentTop - step}px`;
+                    break;
+                case 'down':
+                    characterImage.style.top = `${currentTop + step}px`;
+                    break;
+                case 'left':
+                    characterImage.style.left = `${currentLeft - step}px`;
+                    break;
+                case 'right':
+                    characterImage.style.left = `${currentLeft + step}px`;
+                    break;
+            }
+        }
+
+        // Ajouter des événements pour les boutons
+        document.getElementById('up').addEventListener('click', () => moveCharacter('up'));
+        document.getElementById('down').addEventListener('click', () => moveCharacter('down'));
+        document.getElementById('left').addEventListener('click', () => moveCharacter('left'));
+        document.getElementById('right').addEventListener('click', () => moveCharacter('right'));
     </script>
 </body>
 </html>
