@@ -3,105 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="pluginAssets/highlight.js/atom-one-light.css">
     <title>StardewPote P2</title>
     <style>
+        html {
+            line-height: 1.15;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             margin: 0;
             font-size: 15px;
             color: #32373F;
+            word-wrap: break-word;
+            line-height: 1.6em;
             background-color: #d3f8d8; /* Fond vert pastel */
             font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
             padding: 20px;
-            position: relative; /* Nécessaire pour positionner l'image */
+            position: relative; /* Nécessaire pour le positionnement absolu de l'image */
             min-height: 100vh;
+        }
+
+        .exported-note-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 0.8em;
+            line-height: 1.5em;
+            padding-bottom: .35em;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        p, h1, h2, h3 {
+            margin-top: 0.6em;
+            margin-bottom: 1.35em;
+        }
+
+        .character-display {
+            text-align: center;
+            margin-top: 20px;
         }
 
         .character-display img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            position: absolute;
-            cursor: pointer; /* Le curseur devient un pointeur quand on survole l'image */
+            position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
+            cursor: pointer; /* Change le curseur lorsque l'image est cliquée */
+        }
+
+        .character-display h2 {
+            margin-top: 10px;
+            color: #555;
         }
     </style>
 </head>
 <body>
     <div class="exported-note">
         <div class="exported-note-title">StardewPote P2</div>
-        <p>Bienvenue sur la deuxième partie de StardewPote !</p>
+        <p>Bienvenue sur la deuxième partie de StardewPote!</p>
 
+        <!-- Section pour afficher les informations sur le personnage -->
         <div class="character-display" id="character-display">
-            <!-- Les images des personnages seront injectées ici -->
+            <!-- Contenu injecté par JavaScript -->
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Remplace ceci par tes propres données de connexion Supabase
-        const supabase = createClient('https://jubfwjzmtosbtbgsnbka.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1YmZ3anptdG9zYnRiZ3NuYmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc3NDYzMDUsImV4cCI6MjA1MzMyMjMwNX0.s1rnGejG9TA9S7yRALZ-3AQucC0J9IaZ6sKlm3M_qlE');
+        // Fonction pour récupérer les paramètres d'URL
+        function getUrlParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
 
-        const characterDisplay = document.getElementById('character-display');
+        // Récupérer les informations sur le personnage
+        const character = getUrlParameter('character');
+        const image = getUrlParameter('image');
 
-        // Fonction pour récupérer les personnages depuis Supabase
-        async function fetchCharacters() {
-            const { data, error } = await supabase
-                .from('characters')
-                .select('id, x, y');
+        // Sélection de l'élément où afficher le personnage
+        const displayElement = document.getElementById('character-display');
 
-            if (error) {
-                console.error('Erreur en récupérant les personnages : ', error);
-                return;
-            }
+        if (character && image) {
+            // Afficher le personnage sélectionné
+            displayElement.innerHTML = `
+                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
+                <h2>Vous avez choisi : ${character}</h2>
+            `;
 
-            data.forEach(character => {
-                // Créer l'élément image pour chaque personnage
-                const imgElement = document.createElement('img');
-                imgElement.src = `https://example.com/images/${character.id}.png`; // Remplace par l'URL correcte de l'image
-                imgElement.id = `character-image-${character.id}`;
-                imgElement.alt = `Personnage ${character.id}`;
-                imgElement.style.left = `${character.x}px`;
-                imgElement.style.top = `${character.y}px`;
-                characterDisplay.appendChild(imgElement);
+            // Récupérer l'image et la rendre déplaçable
+            const characterImage = document.getElementById('character-image');
+            let offsetX, offsetY;
 
-                // Fonction pour déplacer l'image
-                let offsetX, offsetY;
-                imgElement.addEventListener('mousedown', (event) => {
-                    offsetX = event.clientX - imgElement.getBoundingClientRect().left;
-                    offsetY = event.clientY - imgElement.getBoundingClientRect().top;
+            // Fonction pour démarrer le déplacement
+            characterImage.addEventListener('mousedown', (event) => {
+                offsetX = event.clientX - characterImage.getBoundingClientRect().left;
+                offsetY = event.clientY - characterImage.getBoundingClientRect().top;
 
-                    const onMouseMove = (event) => {
-                        const newX = event.clientX - offsetX;
-                        const newY = event.clientY - offsetY;
-                        imgElement.style.left = `${newX}px`;
-                        imgElement.style.top = `${newY}px`;
+                // Ajoute un écouteur pour déplacer l'image
+                const onMouseMove = (event) => {
+                    characterImage.style.left = `${event.clientX - offsetX}px`;
+                    characterImage.style.top = `${event.clientY - offsetY}px`;
+                };
 
-                        // Mettre à jour les coordonnées dans Supabase
-                        updatePositionInSupabase(character.id, newX, newY);
-                    };
+                // Écouteur pour arrêter le mouvement de l'image
+                const onMouseUp = () => {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                };
 
-                    const onMouseUp = () => {
-                        window.removeEventListener('mousemove', onMouseMove);
-                        window.removeEventListener('mouseup', onMouseUp);
-                    };
-
-                    window.addEventListener('mousemove', onMouseMove);
-                    window.addEventListener('mouseup', onMouseUp);
-                });
+                // Ajoute l'écouteur de mouvement et d'arrêt
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
             });
-        }
 
-        // Fonction pour mettre à jour les coordonnées dans Supabase
-        async function updatePositionInSupabase(id, x, y) {
-            const { error } = await supabase
-                .from('characters')
-                .upsert([
-                    { id: id, x: x, y: y }
-                ]);
-            if (error) console.error("Erreur de mise à jour dans Supabase :", error);
+        } else {
+            // Si aucun personnage n'est passé dans l'URL
+            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
-
-        // Appeler la fonction pour récupérer les personnages
-        fetchCharacters();
     </script>
 </body>
 </html>
