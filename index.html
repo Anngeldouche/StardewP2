@@ -1,252 +1,56 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="pluginAssets/highlight.js/atom-one-light.css">
-    <title>StardewPote P2</title>
-    <style>
-        html {
-            line-height: 1.15;
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
+<script>
+    // Ajouter un écouteur global pour capturer les touches du clavier
+    let keysPressed = {};
+
+    window.addEventListener('keydown', (event) => {
+        const key = event.key;
+
+        // Ajouter la touche au tableau des touches enfoncées
+        keysPressed[key] = true;
+
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+            moveCharacterOnKeyDown(key); // Appeler la fonction de mouvement
         }
+    });
 
-        body {
-            margin: 0;
-            font-size: 15px;
-            color: #32373F;
-            word-wrap: break-word;
-            line-height: 1.6em;
-            background-color: #d3f8d8; /* Fond vert pastel par défaut */
-            font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
-            padding: 20px;
-            position: relative; /* Nécessaire pour le positionnement absolu de l'image */
-            min-height: 100vh;
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/FondWds.png'); /* Ajout de l'image en fond */
-            background-size: cover; /* Pour que l'image couvre toute la page */
-            background-position: center; /* Centrer l'image */
-            background-attachment: fixed; /* Fixe l'image lorsque l'utilisateur défile */
-        }
+    window.addEventListener('keyup', (event) => {
+        const key = event.key;
 
-        .character-display {
-            text-align: center;
-            margin-top: 20px;
-        }
+        // Supprimer la touche du tableau des touches enfoncées
+        delete keysPressed[key];
+    });
 
-        .character-display img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
-            cursor: pointer; /* Change le curseur lorsque l'image est cliquée */
-        }
+    // Fonction pour déplacer le personnage en fonction de la touche pressée
+    function moveCharacterOnKeyDown(key) {
+        const characterImage = document.getElementById('character-image');
+        let currentPosition = characterImage.getBoundingClientRect();
+        let minTop = 0;
+        let maxTop = window.innerHeight - characterImage.offsetHeight;
+        let minLeft = 0;
+        let maxLeft = window.innerWidth - characterImage.offsetWidth;
 
-        .character-display h2 {
-            margin-top: 10px;
-            color: #555;
-        }
-
-        /* Joystick */
-        #joystick-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .joystick-btn {
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .joystick-btn:active {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-    </style>
-</head>
-<body>
-    <div class="exported-note">
-        <!-- Contenu supprimé -->
-        <div class="character-display" id="character-display">
-            <!-- Contenu injecté par JavaScript -->
-        </div>
-    </div>
-
-    <!-- Crois de déplacement -->
-    <div id="joystick-container">
-        <button id="up" class="joystick-btn">↑</button>
-        <button id="left" class="joystick-btn">←</button>
-        <button id="right" class="joystick-btn">→</button>
-        <button id="down" class="joystick-btn">↓</button>
-    </div>
-
-    <script>
-        // Fonction pour récupérer les paramètres d'URL
-        function getUrlParameter(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        // Liste des copains avec leurs noms
-        const copains = {
-            "1": "Angle",
-            "2": "Chim",
-            "3": "Zonzon",
-            "4": "Luc",
-            "5": "Mori"
-        };
-
-        // Récupérer les informations sur le personnage
-        const characterId = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        // Sélection de l'élément où afficher le personnage
-        const displayElement = document.getElementById('character-display');
-
-        if (characterId && image) {
-            // Obtenir le nom du copain en fonction de l'ID
-            const characterName = copains[characterId] || "Copain inconnu"; // S'il n'y a pas d'ID valide
-
-            // Afficher le personnage sélectionné
-            displayElement.innerHTML = `
-                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Bienvenue ${characterName}</h2> <!-- Affichage personnalisé -->
-            `;
-
-            // Récupérer l'image et la rendre déplaçable
-            const characterImage = document.getElementById('character-image');
-            let offsetX, offsetY;
-
-            // Fonction pour démarrer le déplacement
-            characterImage.addEventListener('mousedown', (event) => {
-                offsetX = event.clientX - characterImage.getBoundingClientRect().left;
-                offsetY = event.clientY - characterImage.getBoundingClientRect().top;
-
-                // Ajoute un écouteur pour déplacer l'image
-                const onMouseMove = (event) => {
-                    characterImage.style.left = `${event.clientX - offsetX}px`;
-                    characterImage.style.top = `${event.clientY - offsetY}px`;
-                };
-
-                // Écouteur pour arrêter le mouvement de l'image
-                const onMouseUp = () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                };
-
-                // Ajoute l'écouteur de mouvement et d'arrêt
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-            });
-
-            // Ajouter des événements de clic pour la croix de déplacement
-            let intervalId;
-
-            document.getElementById("up").addEventListener("mousedown", function() {
-                intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
-            });
-
-            document.getElementById("down").addEventListener("mousedown", function() {
-                intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
-            });
-
-            document.getElementById("left").addEventListener("mousedown", function() {
-                intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
-            });
-
-            document.getElementById("right").addEventListener("mousedown", function() {
-                intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
-            });
-
-            // Ajouter des événements tactiles pour les boutons (mobile)
-            document.getElementById("up").addEventListener("touchstart", function() {
-                intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
-            });
-
-            document.getElementById("down").addEventListener("touchstart", function() {
-                intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
-            });
-
-            document.getElementById("left").addEventListener("touchstart", function() {
-                intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
-            });
-
-            document.getElementById("right").addEventListener("touchstart", function() {
-                intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
-            });
-
-            // Arrêter le déplacement lorsque le bouton est relâché
-            document.getElementById("up").addEventListener("mouseup", stopMoving);
-            document.getElementById("down").addEventListener("mouseup", stopMoving);
-            document.getElementById("left").addEventListener("mouseup", stopMoving);
-            document.getElementById("right").addEventListener("mouseup", stopMoving);
-
-            // Arrêter le déplacement lorsque le bouton est relâché (mobile)
-            document.getElementById("up").addEventListener("touchend", stopMoving);
-            document.getElementById("down").addEventListener("touchend", stopMoving);
-            document.getElementById("left").addEventListener("touchend", stopMoving);
-            document.getElementById("right").addEventListener("touchend", stopMoving);
-
-            // Arrêter le déplacement lorsque le curseur quitte le bouton
-            document.getElementById("up").addEventListener("mouseleave", stopMoving);
-            document.getElementById("down").addEventListener("mouseleave", stopMoving);
-            document.getElementById("left").addEventListener("mouseleave", stopMoving);
-            document.getElementById("right").addEventListener("mouseleave", stopMoving);
-
-            function stopMoving() {
-                clearInterval(intervalId); // Arrêter le déplacement continu
-            }
-
-            // Fonction de déplacement du personnage
-            function moveCharacter(direction) {
-                const characterImage = document.getElementById('character-image');
-                let currentPosition = characterImage.getBoundingClientRect();
-                let minTop = 0;
-                let maxTop = window.innerHeight - characterImage.offsetHeight;
-                let minLeft = 0;
-                let maxLeft = window.innerWidth - characterImage.offsetWidth;
-
-                // Calcul de la nouvelle position en fonction de la direction
-                switch(direction) {
-                    case "up":
-                        if (currentPosition.top > minTop) {
-                            characterImage.style.top = `${currentPosition.top - 10}px`;
-                        }
-                        break;
-                    case "down":
-                        if (currentPosition.top < maxTop) {
-                            characterImage.style.top = `${currentPosition.top + 10}px`;
-                        }
-                        break;
-                    case "left":
-                        if (currentPosition.left > minLeft) {
-                            characterImage.style.left = `${currentPosition.left - 10}px`;
-                        }
-                        break;
-                    case "right":
-                        if (currentPosition.left < maxLeft) {
-                            characterImage.style.left = `${currentPosition.left + 10}px`;
-                        }
-                        break;
+        // Déterminer la direction et effectuer le déplacement
+        switch (key) {
+            case 'ArrowUp':
+                if (currentPosition.top > minTop) {
+                    characterImage.style.top = `${currentPosition.top - 10}px`;
                 }
-            }
-
-        } else {
-            // Si aucun personnage n'est passé dans l'URL
-            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+                break;
+            case 'ArrowDown':
+                if (currentPosition.top < maxTop) {
+                    characterImage.style.top = `${currentPosition.top + 10}px`;
+                }
+                break;
+            case 'ArrowLeft':
+                if (currentPosition.left > minLeft) {
+                    characterImage.style.left = `${currentPosition.left - 10}px`;
+                }
+                break;
+            case 'ArrowRight':
+                if (currentPosition.left < maxLeft) {
+                    characterImage.style.left = `${currentPosition.left + 10}px`;
+                }
+                break;
         }
-
-    </script>
-</body>
-</html>
+    }
+</script>
