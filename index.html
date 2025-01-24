@@ -1,260 +1,154 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="pluginAssets/highlight.js/atom-one-light.css">
-    <title>StardewPote P2</title>
-    <style>
-        html {
-            line-height: 1.15;
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
+<script>
+    // Fonction pour récupérer les paramètres d'URL
+    function getUrlParameter(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
 
-        body {
-            margin: 0;
-            font-size: 15px;
-            color: #32373F;
-            word-wrap: break-word;
-            line-height: 1.6em;
-            background-color: #d3f8d8; /* Fond vert pastel par défaut */
-            font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
-            padding: 20px;
-            position: relative; /* Nécessaire pour le positionnement absolu de l'image */
-            min-height: 100vh;
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/FondWds.png'); /* Ajout de l'image en fond */
-            background-size: cover; /* Pour que l'image couvre toute la page */
-            background-position: center; /* Centrer l'image */
-            background-attachment: fixed; /* Fixe l'image lorsque l'utilisateur défile */
-        }
+    const directionImages = {
+        up: "https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png", // Dos
+        down: "https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png", // Face
+        left: "https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png", // Gauche
+        right: "https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png", // Droite
+    };
 
-        .character-display {
-            text-align: center;
-            margin-top: 20px;
-        }
+    const copains = {
+        "1": "Angle",
+        "2": "Chim",
+        "3": "Zonzon",
+        "4": "Luc",
+        "5": "Mori"
+    };
 
-        .character-display img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
-            cursor: pointer; /* Change le curseur lorsque l'image est cliquée */
-        }
+    const characterId = getUrlParameter('character');
+    const image = getUrlParameter('image');
+    const displayElement = document.getElementById('character-display');
 
-        .character-display h2 {
-            margin-top: 10px;
-            color: #555;
-        }
+    if (characterId && image) {
+        const characterName = copains[characterId] || "Copain inconnu";
+        displayElement.innerHTML = `
+            <img src="${image}" alt="Personnage sélectionné" id="character-image" />
+            <h2>Bienvenue ${characterName}</h2>
+        `;
 
-        /* Joystick */
-        #joystick-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
+        const characterImage = document.getElementById('character-image');
+        let offsetX, offsetY;
 
-        .joystick-btn {
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+        characterImage.addEventListener('mousedown', (event) => {
+            offsetX = event.clientX - characterImage.getBoundingClientRect().left;
+            offsetY = event.clientY - characterImage.getBoundingClientRect().top;
 
-        .joystick-btn:active {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-    </style>
-</head>
-<body>
-    <div class="exported-note">
-        <!-- Contenu supprimé -->
-        <div class="character-display" id="character-display">
-            <!-- Contenu injecté par JavaScript -->
-        </div>
-    </div>
+            const onMouseMove = (event) => {
+                characterImage.style.left = `${event.clientX - offsetX}px`;
+                characterImage.style.top = `${event.clientY - offsetY}px`;
+            };
 
-    <!-- Crois de déplacement -->
-    <div id="joystick-container">
-        <button id="up" class="joystick-btn">↑</button>
-        <button id="left" class="joystick-btn">←</button>
-        <button id="right" class="joystick-btn">→</button>
-        <button id="down" class="joystick-btn">↓</button>
-    </div>
+            const onMouseUp = () => {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            };
 
-    <script>
-        // Fonction pour récupérer les paramètres d'URL
-        function getUrlParameter(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        // Liste des copains avec leurs noms
-        const copains = {
-            "1": "Angle",
-            "2": "Chim",
-            "3": "Zonzon",
-            "4": "Luc",
-            "5": "Mori"
-        };
-
-        // Récupérer les informations sur le personnage
-        const characterId = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        // Sélection de l'élément où afficher le personnage
-        const displayElement = document.getElementById('character-display');
-
-        if (characterId && image) {
-            // Obtenir le nom du copain en fonction de l'ID
-            const characterName = copains[characterId] || "Copain inconnu"; // S'il n'y a pas d'ID valide
-
-            // Afficher le personnage sélectionné
-            displayElement.innerHTML = `
-                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Bienvenue ${characterName}</h2> <!-- Affichage personnalisé -->
-            `;
-
-            // Récupérer l'image et la rendre déplaçable
-            const characterImage = document.getElementById('character-image');
-            let offsetX, offsetY;
-
-            // Fonction pour démarrer le déplacement
-            characterImage.addEventListener('mousedown', (event) => {
-                offsetX = event.clientX - characterImage.getBoundingClientRect().left;
-                offsetY = event.clientY - characterImage.getBoundingClientRect().top;
-
-                // Ajoute un écouteur pour déplacer l'image
-                const onMouseMove = (event) => {
-                    characterImage.style.left = `${event.clientX - offsetX}px`;
-                    characterImage.style.top = `${event.clientY - offsetY}px`;
-                };
-
-                // Écouteur pour arrêter le mouvement de l'image
-                const onMouseUp = () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                };
-
-                // Ajoute l'écouteur de mouvement et d'arrêt
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-            });
-
-        } else {
-            // Si aucun personnage n'est passé dans l'URL
-            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
-        }
-
-        let intervalId;
-
-        // Ajouter des événements de clic pour la croix de déplacement
-        document.getElementById("up").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
         });
 
-        document.getElementById("down").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
-        });
+    } else {
+        displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+    }
 
-        document.getElementById("left").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
-        });
+    let intervalId;
 
-        document.getElementById("right").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
-        });
+    document.getElementById("up").addEventListener("mousedown", () => startMoving("up"));
+    document.getElementById("down").addEventListener("mousedown", () => startMoving("down"));
+    document.getElementById("left").addEventListener("mousedown", () => startMoving("left"));
+    document.getElementById("right").addEventListener("mousedown", () => startMoving("right"));
 
-        // Arrêter le déplacement lorsque le bouton est relâché
-        document.getElementById("up").addEventListener("mouseup", stopMoving);
-        document.getElementById("down").addEventListener("mouseup", stopMoving);
-        document.getElementById("left").addEventListener("mouseup", stopMoving);
-        document.getElementById("right").addEventListener("mouseup", stopMoving);
+    document.getElementById("up").addEventListener("mouseup", stopMoving);
+    document.getElementById("down").addEventListener("mouseup", stopMoving);
+    document.getElementById("left").addEventListener("mouseup", stopMoving);
+    document.getElementById("right").addEventListener("mouseup", stopMoving);
 
-        // Arrêter le déplacement lorsque le bouton est relâché
-        document.getElementById("up").addEventListener("mouseleave", stopMoving);
-        document.getElementById("down").addEventListener("mouseleave", stopMoving);
-        document.getElementById("left").addEventListener("mouseleave", stopMoving);
-        document.getElementById("right").addEventListener("mouseleave", stopMoving);
+    document.getElementById("up").addEventListener("mouseleave", stopMoving);
+    document.getElementById("down").addEventListener("mouseleave", stopMoving);
+    document.getElementById("left").addEventListener("mouseleave", stopMoving);
+    document.getElementById("right").addEventListener("mouseleave", stopMoving);
 
-        function stopMoving() {
-            clearInterval(intervalId); // Arrêter le déplacement continu
+    function startMoving(direction) {
+        intervalId = setInterval(() => moveCharacter(direction), 50);
+    }
+
+    function stopMoving() {
+        clearInterval(intervalId);
+    }
+
+    function moveCharacter(direction) {
+        const characterImage = document.getElementById('character-image');
+        let currentPosition = characterImage.getBoundingClientRect();
+
+        // Change l'image en fonction de la direction
+        characterImage.src = directionImages[direction];
+
+        switch (direction) {
+            case "up":
+                characterImage.style.top = `${currentPosition.top - 10}px`;
+                break;
+            case "down":
+                characterImage.style.top = `${currentPosition.top + 10}px`;
+                break;
+            case "left":
+                characterImage.style.left = `${currentPosition.left - 10}px`;
+                break;
+            case "right":
+                characterImage.style.left = `${currentPosition.left + 10}px`;
+                break;
+        }
+    }
+
+    const keysPressed = {
+        ArrowUp: false,
+        ArrowDown: false,
+        ArrowLeft: false,
+        ArrowRight: false,
+    };
+
+    window.addEventListener('keydown', (event) => {
+        event.preventDefault();
+        if (event.key in keysPressed) {
+            keysPressed[event.key] = true;
+            moveCharacterBasedOnKeys();
+        }
+    });
+
+    window.addEventListener('keyup', (event) => {
+        if (event.key in keysPressed) {
+            keysPressed[event.key] = false;
+        }
+    });
+
+    function moveCharacterBasedOnKeys() {
+        const characterImage = document.getElementById('character-image');
+        let currentPosition = characterImage.getBoundingClientRect();
+        let moveX = 0;
+        let moveY = 0;
+
+        if (keysPressed.ArrowUp) {
+            moveY -= 10;
+            characterImage.src = directionImages["up"];
+        }
+        if (keysPressed.ArrowDown) {
+            moveY += 10;
+            characterImage.src = directionImages["down"];
+        }
+        if (keysPressed.ArrowLeft) {
+            moveX -= 10;
+            characterImage.src = directionImages["left"];
+        }
+        if (keysPressed.ArrowRight) {
+            moveX += 10;
+            characterImage.src = directionImages["right"];
         }
 
-        // Fonction de déplacement du personnage
-        function moveCharacter(direction) {
-            const characterImage = document.getElementById('character-image');
-            let currentPosition = characterImage.getBoundingClientRect();
-
-            // Calcul de la nouvelle position en fonction de la direction
-            switch(direction) {
-                case "up":
-                    characterImage.style.top = `${currentPosition.top - 10}px`;
-                    break;
-                case "down":
-                    characterImage.style.top = `${currentPosition.top + 10}px`;
-                    break;
-                case "left":
-                    characterImage.style.left = `${currentPosition.left - 10}px`;
-                    break;
-                case "right":
-                    characterImage.style.left = `${currentPosition.left + 10}px`;
-                    break;
-            }
-        }
-
-        // Suivi des touches
-        const keysPressed = {
-            ArrowUp: false,
-            ArrowDown: false,
-            ArrowLeft: false,
-            ArrowRight: false,
-        };
-
-        // Ajouter un écouteur pour les touches directionnelles du clavier
-        window.addEventListener('keydown', (event) => {
-            // Empêche le défilement de la page
-            event.preventDefault();
-
-            if (event.key in keysPressed) {
-                keysPressed[event.key] = true;
-                moveCharacterBasedOnKeys();
-            }
-        });
-
-        // Ajouter un écouteur pour les touches relâchées
-        window.addEventListener('keyup', (event) => {
-            if (event.key in keysPressed) {
-                keysPressed[event.key] = false;
-                moveCharacterBasedOnKeys();
-            }
-        });
-
-        // Déplacer le personnage en fonction des touches enfoncées
-        function moveCharacterBasedOnKeys() {
-            const characterImage = document.getElementById('character-image');
-            let currentPosition = characterImage.getBoundingClientRect();
-            let moveX = 0;
-            let moveY = 0;
-
-            if (keysPressed.ArrowUp) moveY -= 10;
-            if (keysPressed.ArrowDown) moveY += 10;
-            if (keysPressed.ArrowLeft) moveX -= 10;
-            if (keysPressed.ArrowRight) moveX += 10;
-
-            // Applique les changements
-            characterImage.style.left = `${currentPosition.left + moveX}px`;
-            characterImage.style.top = `${currentPosition.top + moveY}px`;
-        }
-    </script>
-</body>
-</html>
+        characterImage.style.left = `${currentPosition.left + moveX}px`;
+        characterImage.style.top = `${currentPosition.top + moveY}px`;
+    }
+</script>
