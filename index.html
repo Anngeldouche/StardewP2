@@ -50,22 +50,22 @@
         /* Joystick */
         #joystick-container {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .joystick-btn {
             background-color: rgba(0, 0, 0, 0.6);
             color: white;
             border: none;
-            padding: 20px;
-            font-size: 24px;
-            width: 70px;
-            height: 70px;
+            padding: 15px;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
         }
@@ -151,6 +151,8 @@
             });
 
             // Ajouter des événements de clic pour la croix de déplacement
+            let intervalId;
+
             document.getElementById("up").addEventListener("mousedown", function() {
                 intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
             });
@@ -206,24 +208,36 @@
                 clearInterval(intervalId); // Arrêter le déplacement continu
             }
 
-            // Fonction de déplacement du personnage
+            // Fonction de déplacement du personnage avec limites
             function moveCharacter(direction) {
                 const characterImage = document.getElementById('character-image');
                 let currentPosition = characterImage.getBoundingClientRect();
+                const maxLeft = window.innerWidth - characterImage.offsetWidth;
+                const maxTop = window.innerHeight - characterImage.offsetHeight;
+                const minTop = 0;
+                const minLeft = 0;
 
                 // Calcul de la nouvelle position en fonction de la direction
                 switch(direction) {
                     case "up":
-                        characterImage.style.top = `${currentPosition.top - 10}px`;
+                        if (currentPosition.top > minTop) {
+                            characterImage.style.top = `${currentPosition.top - 10}px`;
+                        }
                         break;
                     case "down":
-                        characterImage.style.top = `${currentPosition.top + 10}px`;
+                        if (currentPosition.top < maxTop) {
+                            characterImage.style.top = `${currentPosition.top + 10}px`;
+                        }
                         break;
                     case "left":
-                        characterImage.style.left = `${currentPosition.left - 10}px`;
+                        if (currentPosition.left > minLeft) {
+                            characterImage.style.left = `${currentPosition.left - 10}px`;
+                        }
                         break;
                     case "right":
-                        characterImage.style.left = `${currentPosition.left + 10}px`;
+                        if (currentPosition.left < maxLeft) {
+                            characterImage.style.left = `${currentPosition.left + 10}px`;
+                        }
                         break;
                 }
             }
@@ -235,4 +249,3 @@
     </script>
 </body>
 </html>
-
