@@ -1,59 +1,192 @@
-// Liste des copains avec leurs noms
-const copains = {
-    "1": "Angle",
-    "2": "Chim",
-    "3": "Zonzon",
-    "4": "Luc",
-    "5": "Mori"
-};
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StardewPote P2</title>
+    <style>
+        /* Styles généraux */
+        html {
+            line-height: 1.15;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
 
-// Récupérer les informations sur le personnage
-const characterId = getUrlParameter('character');
-const image = getUrlParameter('image');
+        body {
+            margin: 0;
+            font-size: 15px;
+            color: #32373F;
+            word-wrap: break-word;
+            line-height: 1.6em;
+            background-color: #d3f8d8;
+            font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/FondWds.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow: hidden;
+            position: relative;
+        }
 
-// Sélection de l'élément où afficher le personnage
-const displayElement = document.getElementById('character-display');
+        /* Style pour l'affichage du personnage */
+        .character-display {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+        }
 
-if (characterId && image) {
-    // Obtenir le nom du copain en fonction de l'ID
-    const characterName = copains[characterId] || "Copain inconnu"; // S'il n'y a pas d'ID valide
+        .character-display img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%; /* Centré verticalement */
+            left: 50%; /* Centré horizontalement */
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
 
-    // Si c'est Zonzon, on utilise l'URL spécifique
-    const characterImage = (characterName === 'Zonzon') ? 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3).png' : image;
+        .character-display h2 {
+            margin-top: 20px;
+            color: #555;
+            font-size: 20px;
+        }
 
-    // Afficher le personnage sélectionné
-    displayElement.innerHTML = `
-        <img src="${characterImage}" alt="Personnage sélectionné" id="character-image" />
-        <h2>Bienvenue ${characterName}</h2> <!-- Affichage personnalisé -->
-    `;
+        /* Styles pour le joystick */
+        #joystick-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+            grid-template-columns: auto auto auto;
+            gap: 10px;
+            align-items: center;
+            justify-items: center;
+        }
 
-    // Récupérer l'image et la rendre déplaçable
-    const characterImageElement = document.getElementById('character-image');
-    let offsetX, offsetY;
+        .joystick-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    // Fonction pour démarrer le déplacement
-    characterImageElement.addEventListener('mousedown', (event) => {
-        offsetX = event.clientX - characterImageElement.getBoundingClientRect().left;
-        offsetY = event.clientY - characterImageElement.getBoundingClientRect().top;
+        .joystick-btn:active {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenu principal -->
+    <div class="character-display" id="character-display">
+        <!-- Le personnage sélectionné sera injecté ici via JavaScript -->
+    </div>
 
-        // Ajoute un écouteur pour déplacer l'image
-        const onMouseMove = (event) => {
-            characterImageElement.style.left = `${event.clientX - offsetX}px`;
-            characterImageElement.style.top = `${event.clientY - offsetY}px`;
+    <!-- Joystick -->
+    <div id="joystick-container">
+        <button id="up" class="joystick-btn">↑</button>
+        <button id="left" class="joystick-btn">←</button>
+        <button id="right" class="joystick-btn">→</button>
+        <button id="down" class="joystick-btn">↓</button>
+    </div>
+
+    <script>
+        /**
+         * Fonction pour récupérer les paramètres d'URL
+         * @param {string} name - Le nom du paramètre à récupérer
+         * @returns {string|null} La valeur du paramètre ou null s'il n'existe pas
+         */
+        function getUrlParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        // Liste des personnages avec leurs noms associés
+        const copains = {
+            "Angle": "Angle",
+            "Chim": "Chim",
+            "Zonzon": "Zonzon",
+            "Luc": "Luc",
+            "Mori": "Mori"
         };
 
-        // Écouteur pour arrêter le mouvement de l'image
-        const onMouseUp = () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-        };
+        // Récupérer les informations depuis l'URL
+        const characterName = getUrlParameter('character');
+        const characterImage = getUrlParameter('image');
 
-        // Ajoute l'écouteur de mouvement et d'arrêt
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-    });
+        // Sélection de l'élément où afficher le personnage
+        const displayElement = document.getElementById('character-display');
 
-} else {
-    // Si aucun personnage n'est passé dans l'URL
-    displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
-}
+        if (characterName && characterImage) {
+            // Valider le personnage et afficher son image
+            displayElement.innerHTML = `
+                <img src="${characterImage}" alt="${characterName}" id="character-image" />
+                <h2>Bienvenue, ${copains[characterName] || "inconnu"} !</h2>
+            `;
+        } else {
+            // Aucun personnage n'a été sélectionné
+            displayElement.innerHTML = `
+                <h2>Aucun personnage sélectionné. Retournez à la page précédente pour choisir un personnage.</h2>
+            `;
+        }
+
+        // Permettre le déplacement du personnage
+        const characterImg = document.getElementById("character-image");
+        let intervalId;
+
+        // Déplacer l'image avec les boutons de la croix
+        const joystick = document.getElementById('joystick-container');
+        joystick.addEventListener('mousedown', (event) => {
+            if (event.target.classList.contains('joystick-btn')) {
+                const direction = event.target.id;
+                intervalId = setInterval(() => moveCharacter(direction), 50);
+            }
+        });
+
+        joystick.addEventListener('mouseup', stopMoving);
+        joystick.addEventListener('mouseleave', stopMoving);
+
+        function stopMoving() {
+            clearInterval(intervalId);
+        }
+
+        function moveCharacter(direction) {
+            const img = document.getElementById('character-image');
+            const rect = img.getBoundingClientRect();
+
+            let x = rect.left;
+            let y = rect.top;
+
+            switch (direction) {
+                case 'up':
+                    y -= 10;
+                    break;
+                case 'down':
+                    y += 10;
+                    break;
+                case 'left':
+                    x -= 10;
+                    break;
+                case 'right':
+                    x += 10;
+                    break;
+            }
+
+            img.style.position = 'absolute';
+            img.style.left = `${x}px`;
+            img.style.top = `${y}px`;
+        }
+    </script>
+</body>
+</html>
