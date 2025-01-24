@@ -98,11 +98,7 @@
             return params.get(name);
         }
 
-        // Récupérer les informations sur le personnage
-        const character = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        // Dictionnaire des copains avec leurs messages de bienvenue
+        // Liste des copains avec leurs noms
         const copains = {
             "1": "Angle",
             "2": "Chim",
@@ -111,16 +107,21 @@
             "5": "Mori"
         };
 
+        // Récupérer les informations sur le personnage
+        const characterId = getUrlParameter('character');
+        const image = getUrlParameter('image');
+
         // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
-        if (character && image) {
-            const copainName = copains[character];
+        if (characterId && image) {
+            // Obtenir le nom du copain en fonction de l'ID
+            const characterName = copains[characterId] || "Copain inconnu"; // S'il n'y a pas d'ID valide
 
-            // Afficher le personnage avec le message de bienvenue
+            // Afficher le personnage sélectionné
             displayElement.innerHTML = `
                 <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Bienvenue ${copainName}</h2>
+                <h2>Bienvenue ${characterName}</h2> <!-- Affichage personnalisé -->
             `;
 
             // Récupérer l'image et la rendre déplaçable
