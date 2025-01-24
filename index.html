@@ -1,56 +1,65 @@
 <script>
-    // Ajouter un écouteur global pour capturer les touches du clavier
-    let keysPressed = {};
-
-    window.addEventListener('keydown', (event) => {
-        const key = event.key;
-
-        // Ajouter la touche au tableau des touches enfoncées
-        keysPressed[key] = true;
-
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-            moveCharacterOnKeyDown(key); // Appeler la fonction de mouvement
-        }
-    });
-
-    window.addEventListener('keyup', (event) => {
-        const key = event.key;
-
-        // Supprimer la touche du tableau des touches enfoncées
-        delete keysPressed[key];
-    });
-
-    // Fonction pour déplacer le personnage en fonction de la touche pressée
-    function moveCharacterOnKeyDown(key) {
+    // Attendre que la page soit complètement chargée avant d'exécuter le script
+    document.addEventListener('DOMContentLoaded', () => {
         const characterImage = document.getElementById('character-image');
-        let currentPosition = characterImage.getBoundingClientRect();
-        let minTop = 0;
-        let maxTop = window.innerHeight - characterImage.offsetHeight;
-        let minLeft = 0;
-        let maxLeft = window.innerWidth - characterImage.offsetWidth;
 
-        // Déterminer la direction et effectuer le déplacement
-        switch (key) {
-            case 'ArrowUp':
-                if (currentPosition.top > minTop) {
-                    characterImage.style.top = `${currentPosition.top - 10}px`;
-                }
-                break;
-            case 'ArrowDown':
-                if (currentPosition.top < maxTop) {
-                    characterImage.style.top = `${currentPosition.top + 10}px`;
-                }
-                break;
-            case 'ArrowLeft':
-                if (currentPosition.left > minLeft) {
-                    characterImage.style.left = `${currentPosition.left - 10}px`;
-                }
-                break;
-            case 'ArrowRight':
-                if (currentPosition.left < maxLeft) {
-                    characterImage.style.left = `${currentPosition.left + 10}px`;
-                }
-                break;
+        if (!characterImage) {
+            console.error('Character image not found!');
+            return;
         }
-    }
+
+        let keysPressed = {};
+
+        // Ajouter un écouteur global pour capturer les touches du clavier
+        window.addEventListener('keydown', (event) => {
+            const key = event.key;
+
+            // Ajouter la touche au tableau des touches enfoncées
+            keysPressed[key] = true;
+
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+                moveCharacterOnKeyDown(key); // Appeler la fonction de mouvement
+            }
+        });
+
+        window.addEventListener('keyup', (event) => {
+            const key = event.key;
+
+            // Supprimer la touche du tableau des touches enfoncées
+            delete keysPressed[key];
+        });
+
+        // Fonction pour déplacer le personnage en fonction de la touche pressée
+        function moveCharacterOnKeyDown(key) {
+            const currentPosition = characterImage.getBoundingClientRect();
+            const minTop = 0;
+            const maxTop = window.innerHeight - characterImage.offsetHeight;
+            const minLeft = 0;
+            const maxLeft = window.innerWidth - characterImage.offsetWidth;
+
+            // Déterminer la direction et effectuer le déplacement
+            switch (key) {
+                case 'ArrowUp':
+                    if (currentPosition.top > minTop) {
+                        characterImage.style.top = `${currentPosition.top - 10}px`;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (currentPosition.top < maxTop) {
+                        characterImage.style.top = `${currentPosition.top + 10}px`;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (currentPosition.left > minLeft) {
+                        characterImage.style.left = `${currentPosition.left - 10}px`;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (currentPosition.left < maxLeft) {
+                        characterImage.style.left = `${currentPosition.left + 10}px`;
+                    }
+                    break;
+            }
+        }
+    });
 </script>
