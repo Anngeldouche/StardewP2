@@ -74,16 +74,20 @@
 
         // Récupérer les informations sur le personnage
         const character = getUrlParameter('character');
+        const image = getUrlParameter('image');
 
         // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
-        if (character) {
+        if (character && image) {
             // Afficher le personnage sélectionné
             displayElement.innerHTML = `
-                <img src="https://raw.githubusercontent.com/Anngeldouche/StardewPotes/main/Copainbits/Copains8B(${character}).png" alt="Personnage sélectionné">
+                <img src="${image}" alt="Personnage sélectionné" />
                 <h2>Vous avez choisi : ${character}</h2>
             `;
+
+            // Appliquer l'image du personnage comme curseur personnalisé
+            document.body.style.cursor = `url(${image}), auto`;
         } else {
             // Si aucun personnage n'est passé dans l'URL
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
