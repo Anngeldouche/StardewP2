@@ -50,22 +50,22 @@
         /* Joystick */
         #joystick-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .joystick-btn {
             background-color: rgba(0, 0, 0, 0.6);
             color: white;
             border: none;
-            padding: 15px;
-            font-size: 18px;
-            width: 50px;
-            height: 50px;
+            padding: 20px;
+            font-size: 24px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             cursor: pointer;
         }
@@ -150,111 +150,89 @@
                 window.addEventListener('mouseup', onMouseUp);
             });
 
+            // Ajouter des événements de clic pour la croix de déplacement
+            document.getElementById("up").addEventListener("mousedown", function() {
+                intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
+            });
+
+            document.getElementById("down").addEventListener("mousedown", function() {
+                intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
+            });
+
+            document.getElementById("left").addEventListener("mousedown", function() {
+                intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
+            });
+
+            document.getElementById("right").addEventListener("mousedown", function() {
+                intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
+            });
+
+            // Ajouter des événements tactiles pour les boutons (mobile)
+            document.getElementById("up").addEventListener("touchstart", function() {
+                intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
+            });
+
+            document.getElementById("down").addEventListener("touchstart", function() {
+                intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
+            });
+
+            document.getElementById("left").addEventListener("touchstart", function() {
+                intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
+            });
+
+            document.getElementById("right").addEventListener("touchstart", function() {
+                intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
+            });
+
+            // Arrêter le déplacement lorsque le bouton est relâché
+            document.getElementById("up").addEventListener("mouseup", stopMoving);
+            document.getElementById("down").addEventListener("mouseup", stopMoving);
+            document.getElementById("left").addEventListener("mouseup", stopMoving);
+            document.getElementById("right").addEventListener("mouseup", stopMoving);
+
+            // Arrêter le déplacement lorsque le bouton est relâché (mobile)
+            document.getElementById("up").addEventListener("touchend", stopMoving);
+            document.getElementById("down").addEventListener("touchend", stopMoving);
+            document.getElementById("left").addEventListener("touchend", stopMoving);
+            document.getElementById("right").addEventListener("touchend", stopMoving);
+
+            // Arrêter le déplacement lorsque le curseur quitte le bouton
+            document.getElementById("up").addEventListener("mouseleave", stopMoving);
+            document.getElementById("down").addEventListener("mouseleave", stopMoving);
+            document.getElementById("left").addEventListener("mouseleave", stopMoving);
+            document.getElementById("right").addEventListener("mouseleave", stopMoving);
+
+            function stopMoving() {
+                clearInterval(intervalId); // Arrêter le déplacement continu
+            }
+
+            // Fonction de déplacement du personnage
+            function moveCharacter(direction) {
+                const characterImage = document.getElementById('character-image');
+                let currentPosition = characterImage.getBoundingClientRect();
+
+                // Calcul de la nouvelle position en fonction de la direction
+                switch(direction) {
+                    case "up":
+                        characterImage.style.top = `${currentPosition.top - 10}px`;
+                        break;
+                    case "down":
+                        characterImage.style.top = `${currentPosition.top + 10}px`;
+                        break;
+                    case "left":
+                        characterImage.style.left = `${currentPosition.left - 10}px`;
+                        break;
+                    case "right":
+                        characterImage.style.left = `${currentPosition.left + 10}px`;
+                        break;
+                }
+            }
+
         } else {
             // Si aucun personnage n'est passé dans l'URL
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
-
-        let intervalId;
-
-        // Ajouter des événements de clic pour la croix de déplacement
-        document.getElementById("up").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("up"), 50); // Déplacement continu
-        });
-
-        document.getElementById("down").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("down"), 50); // Déplacement continu
-        });
-
-        document.getElementById("left").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("left"), 50); // Déplacement continu
-        });
-
-        document.getElementById("right").addEventListener("mousedown", function() {
-            intervalId = setInterval(() => moveCharacter("right"), 50); // Déplacement continu
-        });
-
-        // Arrêter le déplacement lorsque le bouton est relâché
-        document.getElementById("up").addEventListener("mouseup", stopMoving);
-        document.getElementById("down").addEventListener("mouseup", stopMoving);
-        document.getElementById("left").addEventListener("mouseup", stopMoving);
-        document.getElementById("right").addEventListener("mouseup", stopMoving);
-
-        // Arrêter le déplacement lorsque le bouton est relâché
-        document.getElementById("up").addEventListener("mouseleave", stopMoving);
-        document.getElementById("down").addEventListener("mouseleave", stopMoving);
-        document.getElementById("left").addEventListener("mouseleave", stopMoving);
-        document.getElementById("right").addEventListener("mouseleave", stopMoving);
-
-        function stopMoving() {
-            clearInterval(intervalId); // Arrêter le déplacement continu
-        }
-
-        // Fonction de déplacement du personnage
-        function moveCharacter(direction) {
-            const characterImage = document.getElementById('character-image');
-            let currentPosition = characterImage.getBoundingClientRect();
-
-            // Calcul de la nouvelle position en fonction de la direction
-            switch(direction) {
-                case "up":
-                    characterImage.style.top = `${currentPosition.top - 10}px`;
-                    break;
-                case "down":
-                    characterImage.style.top = `${currentPosition.top + 10}px`;
-                    break;
-                case "left":
-                    characterImage.style.left = `${currentPosition.left - 10}px`;
-                    break;
-                case "right":
-                    characterImage.style.left = `${currentPosition.left + 10}px`;
-                    break;
-            }
-        }
-
-        // Suivi des touches
-        const keysPressed = {
-            ArrowUp: false,
-            ArrowDown: false,
-            ArrowLeft: false,
-            ArrowRight: false,
-        };
-
-        // Ajouter un écouteur pour les touches directionnelles du clavier
-        window.addEventListener('keydown', (event) => {
-            // Empêche le défilement de la page
-            event.preventDefault();
-
-            if (event.key in keysPressed) {
-                keysPressed[event.key] = true;
-                moveCharacterBasedOnKeys();
-            }
-        });
-
-        // Ajouter un écouteur pour les touches relâchées
-        window.addEventListener('keyup', (event) => {
-            if (event.key in keysPressed) {
-                keysPressed[event.key] = false;
-                moveCharacterBasedOnKeys();
-            }
-        });
-
-        // Déplacer le personnage en fonction des touches enfoncées
-        function moveCharacterBasedOnKeys() {
-            const characterImage = document.getElementById('character-image');
-            let currentPosition = characterImage.getBoundingClientRect();
-            let moveX = 0;
-            let moveY = 0;
-
-            if (keysPressed.ArrowUp) moveY -= 10;
-            if (keysPressed.ArrowDown) moveY += 10;
-            if (keysPressed.ArrowLeft) moveX -= 10;
-            if (keysPressed.ArrowRight) moveX += 10;
-
-            // Applique les changements
-            characterImage.style.left = `${currentPosition.left + moveX}px`;
-            characterImage.style.top = `${currentPosition.top + moveY}px`;
-        }
     </script>
 </body>
 </html>
+
