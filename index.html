@@ -18,9 +18,11 @@
             color: #32373F;
             word-wrap: break-word;
             line-height: 1.6em;
-            background-color: #ffffff;
+            background-color: #d3f8d8; /* Fond vert pastel */
             font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
             padding: 20px;
+            position: relative; /* Nécessaire pour le positionnement absolu de l'image */
+            min-height: 100vh;
         }
 
         .exported-note-title {
@@ -46,6 +48,8 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
+            position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
+            cursor: pointer; /* Change le curseur lorsque l'image est cliquée */
         }
 
         .character-display h2 {
@@ -82,12 +86,36 @@
         if (character && image) {
             // Afficher le personnage sélectionné
             displayElement.innerHTML = `
-                <img src="${image}" alt="Personnage sélectionné" />
+                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
                 <h2>Vous avez choisi : ${character}</h2>
             `;
 
-            // Appliquer l'image du personnage comme curseur personnalisé
-            document.body.style.cursor = `url(${image}), auto`;
+            // Récupérer l'image et la rendre déplaçable
+            const characterImage = document.getElementById('character-image');
+            let offsetX, offsetY;
+
+            // Fonction pour démarrer le déplacement
+            characterImage.addEventListener('mousedown', (event) => {
+                offsetX = event.clientX - characterImage.getBoundingClientRect().left;
+                offsetY = event.clientY - characterImage.getBoundingClientRect().top;
+
+                // Ajoute un écouteur pour déplacer l'image
+                const onMouseMove = (event) => {
+                    characterImage.style.left = `${event.clientX - offsetX}px`;
+                    characterImage.style.top = `${event.clientY - offsetY}px`;
+                };
+
+                // Écouteur pour arrêter le mouvement de l'image
+                const onMouseUp = () => {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                };
+
+                // Ajoute l'écouteur de mouvement et d'arrêt
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+            });
+
         } else {
             // Si aucun personnage n'est passé dans l'URL
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
