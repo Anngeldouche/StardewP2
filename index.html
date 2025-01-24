@@ -1,65 +1,147 @@
-<script>
-    // Attendre que la page soit complètement chargée avant d'exécuter le script
-    document.addEventListener('DOMContentLoaded', () => {
-        const characterImage = document.getElementById('character-image');
-
-        if (!characterImage) {
-            console.error('Character image not found!');
-            return;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StardewPote P2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Empêche le défilement pour gérer uniquement le mouvement */
+            background-color: #d3f8d8;
         }
 
-        let keysPressed = {};
-
-        // Ajouter un écouteur global pour capturer les touches du clavier
-        window.addEventListener('keydown', (event) => {
-            const key = event.key;
-
-            // Ajouter la touche au tableau des touches enfoncées
-            keysPressed[key] = true;
-
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-                moveCharacterOnKeyDown(key); // Appeler la fonction de mouvement
-            }
-        });
-
-        window.addEventListener('keyup', (event) => {
-            const key = event.key;
-
-            // Supprimer la touche du tableau des touches enfoncées
-            delete keysPressed[key];
-        });
-
-        // Fonction pour déplacer le personnage en fonction de la touche pressée
-        function moveCharacterOnKeyDown(key) {
-            const currentPosition = characterImage.getBoundingClientRect();
-            const minTop = 0;
-            const maxTop = window.innerHeight - characterImage.offsetHeight;
-            const minLeft = 0;
-            const maxLeft = window.innerWidth - characterImage.offsetWidth;
-
-            // Déterminer la direction et effectuer le déplacement
-            switch (key) {
-                case 'ArrowUp':
-                    if (currentPosition.top > minTop) {
-                        characterImage.style.top = `${currentPosition.top - 10}px`;
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (currentPosition.top < maxTop) {
-                        characterImage.style.top = `${currentPosition.top + 10}px`;
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (currentPosition.left > minLeft) {
-                        characterImage.style.left = `${currentPosition.left - 10}px`;
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (currentPosition.left < maxLeft) {
-                        characterImage.style.left = `${currentPosition.left + 10}px`;
-                    }
-                    break;
-            }
+        .character-display {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-    });
-</script>
+
+        .character-display img {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+        }
+
+        #joystick-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .joystick-btn {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="character-display">
+        <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3).png" alt="Personnage" id="character-image">
+    </div>
+
+    <!-- Croix de déplacement -->
+    <div id="joystick-container">
+        <button id="up" class="joystick-btn">↑</button>
+        <button id="left" class="joystick-btn">←</button>
+        <button id="right" class="joystick-btn">→</button>
+        <button id="down" class="joystick-btn">↓</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const characterImage = document.getElementById('character-image');
+            const speed = 10; // Vitesse de déplacement
+
+            // Vérification si l'élément existe
+            if (!characterImage) {
+                console.error("L'image du personnage est introuvable !");
+                return;
+            }
+
+            // Initialisation de la position
+            let posX = window.innerWidth / 2 - characterImage.offsetWidth / 2;
+            let posY = window.innerHeight / 2 - characterImage.offsetHeight / 2;
+
+            characterImage.style.left = `${posX}px`;
+            characterImage.style.top = `${posY}px`;
+
+            // Déplacement avec les touches clavier
+            const keysPressed = {};
+            window.addEventListener('keydown', (event) => {
+                keysPressed[event.key] = true;
+                moveCharacter();
+            });
+
+            window.addEventListener('keyup', (event) => {
+                keysPressed[event.key] = false;
+            });
+
+            function moveCharacter() {
+                if (keysPressed['ArrowUp']) posY = Math.max(0, posY - speed);
+                if (keysPressed['ArrowDown']) posY = Math.min(window.innerHeight - characterImage.offsetHeight, posY + speed);
+                if (keysPressed['ArrowLeft']) posX = Math.max(0, posX - speed);
+                if (keysPressed['ArrowRight']) posX = Math.min(window.innerWidth - characterImage.offsetWidth, posX + speed);
+
+                characterImage.style.left = `${posX}px`;
+                characterImage.style.top = `${posY}px`;
+            }
+
+            // Déplacement avec les boutons virtuels
+            let intervalId;
+
+            function startMoving(direction) {
+                stopMoving(); // Empêche les déplacements multiples
+                intervalId = setInterval(() => {
+                    if (direction === 'up') posY = Math.max(0, posY - speed);
+                    if (direction === 'down') posY = Math.min(window.innerHeight - characterImage.offsetHeight, posY + speed);
+                    if (direction === 'left') posX = Math.max(0, posX - speed);
+                    if (direction === 'right') posX = Math.min(window.innerWidth - characterImage.offsetWidth, posX + speed);
+
+                    characterImage.style.left = `${posX}px`;
+                    characterImage.style.top = `${posY}px`;
+                }, 50);
+            }
+
+            function stopMoving() {
+                clearInterval(intervalId);
+            }
+
+            // Événements pour les boutons virtuels
+            document.getElementById('up').addEventListener('mousedown', () => startMoving('up'));
+            document.getElementById('down').addEventListener('mousedown', () => startMoving('down'));
+            document.getElementById('left').addEventListener('mousedown', () => startMoving('left'));
+            document.getElementById('right').addEventListener('mousedown', () => startMoving('right'));
+
+            // Arrêter le déplacement au relâchement du bouton
+            document.getElementById('up').addEventListener('mouseup', stopMoving);
+            document.getElementById('down').addEventListener('mouseup', stopMoving);
+            document.getElementById('left').addEventListener('mouseup', stopMoving);
+            document.getElementById('right').addEventListener('mouseup', stopMoving);
+
+            // Arrêter également lors de la sortie du bouton
+            document.getElementById('up').addEventListener('mouseleave', stopMoving);
+            document.getElementById('down').addEventListener('mouseleave', stopMoving);
+            document.getElementById('left').addEventListener('mouseleave', stopMoving);
+            document.getElementById('right').addEventListener('mouseleave', stopMoving);
+        });
+    </script>
+</body>
+</html>
