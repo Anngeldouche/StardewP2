@@ -196,26 +196,49 @@
             }
         }
 
+        // Suivi des touches
+        const keysPressed = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+        };
+
         // Ajouter un écouteur pour les touches directionnelles du clavier
         window.addEventListener('keydown', (event) => {
             // Empêche le défilement de la page
             event.preventDefault();
 
-            switch (event.key) {
-                case 'ArrowUp':
-                    moveCharacter("up");
-                    break;
-                case 'ArrowDown':
-                    moveCharacter("down");
-                    break;
-                case 'ArrowLeft':
-                    moveCharacter("left");
-                    break;
-                case 'ArrowRight':
-                    moveCharacter("right");
-                    break;
+            if (event.key in keysPressed) {
+                keysPressed[event.key] = true;
+                moveCharacterBasedOnKeys();
             }
         });
+
+        // Ajouter un écouteur pour les touches relâchées
+        window.addEventListener('keyup', (event) => {
+            if (event.key in keysPressed) {
+                keysPressed[event.key] = false;
+                moveCharacterBasedOnKeys();
+            }
+        });
+
+        // Déplacer le personnage en fonction des touches enfoncées
+        function moveCharacterBasedOnKeys() {
+            const characterImage = document.getElementById('character-image');
+            let currentPosition = characterImage.getBoundingClientRect();
+            let moveX = 0;
+            let moveY = 0;
+
+            if (keysPressed.ArrowUp) moveY -= 10;
+            if (keysPressed.ArrowDown) moveY += 10;
+            if (keysPressed.ArrowLeft) moveX -= 10;
+            if (keysPressed.ArrowRight) moveX += 10;
+
+            // Applique les changements
+            characterImage.style.left = `${currentPosition.left + moveX}px`;
+            characterImage.style.top = `${currentPosition.top + moveY}px`;
+        }
     </script>
 </body>
 </html>
