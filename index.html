@@ -42,6 +42,33 @@
             margin-top: 10px;
             color: #555;
         }
+
+        /* Joystick */
+        #joystick-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .joystick-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .joystick-btn:active {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -50,6 +77,14 @@
         <div class="character-display" id="character-display">
             <!-- Contenu injecté par JavaScript -->
         </div>
+    </div>
+
+    <!-- Crois de déplacement -->
+    <div id="joystick-container">
+        <button id="up" class="joystick-btn">↑</button>
+        <button id="left" class="joystick-btn">←</button>
+        <button id="right" class="joystick-btn">→</button>
+        <button id="down" class="joystick-btn">↓</button>
     </div>
 
     <script>
@@ -102,6 +137,45 @@
         } else {
             // Si aucun personnage n'est passé dans l'URL
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+        }
+
+        // Ajouter des événements de clic pour la croix de déplacement
+        document.getElementById("up").addEventListener("click", function() {
+            moveCharacter("up");
+        });
+
+        document.getElementById("down").addEventListener("click", function() {
+            moveCharacter("down");
+        });
+
+        document.getElementById("left").addEventListener("click", function() {
+            moveCharacter("left");
+        });
+
+        document.getElementById("right").addEventListener("click", function() {
+            moveCharacter("right");
+        });
+
+        // Fonction de déplacement du personnage
+        function moveCharacter(direction) {
+            const characterImage = document.getElementById('character-image');
+            let currentPosition = characterImage.getBoundingClientRect();
+
+            // Calcul de la nouvelle position en fonction de la direction
+            switch(direction) {
+                case "up":
+                    characterImage.style.top = `${currentPosition.top - 10}px`;
+                    break;
+                case "down":
+                    characterImage.style.top = `${currentPosition.top + 10}px`;
+                    break;
+                case "left":
+                    characterImage.style.left = `${currentPosition.left - 10}px`;
+                    break;
+                case "right":
+                    characterImage.style.left = `${currentPosition.left + 10}px`;
+                    break;
+            }
         }
     </script>
 </body>
