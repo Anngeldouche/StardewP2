@@ -6,50 +6,32 @@
     <link rel="stylesheet" href="./pluginAssets/highlight.js/atom-one-light.css">
     <title>StardewPote P2</title>
     <style>
-        html {
-            line-height: 1.15;
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
-
         body {
             margin: 0;
             font-size: 15px;
             color: #32373F;
             word-wrap: break-word;
             line-height: 1.6em;
-            background-color: #d3f8d8; /* Fond vert pastel par défaut */
+            background-color: #d3f8d8;
             font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
             padding: 20px;
-            position: relative; /* Nécessaire pour le positionnement absolu de l'image */
             min-height: 100vh;
-            background-image: url('./Copainbits/FondWds.png'); /* Ajout de l'image en fond */
-            background-size: cover; /* Pour que l'image couvre toute la page */
-            background-position: center; /* Centrer l'image */
-            background-attachment: fixed; /* Fixe l'image lorsque l'utilisateur défile */
-        }
-
-        .character-display {
-            text-align: center;
-            margin-top: 20px;
+            background-image: url('./Copainbits/FondWds.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .character-display img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            position: absolute; /* Positionnement absolu pour pouvoir déplacer l'image */
-            top: 50%; /* Position initiale verticale */
-            left: 50%; /* Position initiale horizontale */
+            position: absolute; /* Nécessaire pour déplacer avec top/left */
+            top: 50%; /* Position initiale */
+            left: 50%; /* Position initiale */
             transform: translate(-50%, -50%);
         }
 
-        .character-display h2 {
-            margin-top: 10px;
-            color: #555;
-        }
-
-        /* Joystick */
         #joystick-container {
             position: fixed;
             bottom: 20px;
@@ -79,10 +61,8 @@
     </style>
 </head>
 <body>
-    <div class="exported-note">
-        <div class="character-display" id="character-display">
-            <!-- Contenu injecté par JavaScript -->
-        </div>
+    <div class="character-display" id="character-display">
+        <!-- Le personnage sera injecté ici -->
     </div>
 
     <!-- Croix de déplacement -->
@@ -118,7 +98,7 @@
 
         if (characterId && image) {
             // Obtenir le nom du copain en fonction de l'ID
-            const characterName = copains[characterId] || "Copain inconnu"; 
+            const characterName = copains[characterId] || "Copain inconnu";
 
             // Afficher le personnage sélectionné
             displayElement.innerHTML = `
@@ -132,11 +112,13 @@
         // Fonction pour déplacer le personnage
         function moveCharacter(direction) {
             const characterImage = document.getElementById('character-image');
+            if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
+
             const step = 10; // Distance de déplacement en pixels
 
-            // Obtenir la position actuelle
-            const currentTop = parseInt(window.getComputedStyle(characterImage).top, 10);
-            const currentLeft = parseInt(window.getComputedStyle(characterImage).left, 10);
+            // Obtenir les positions actuelles
+            const currentTop = parseInt(characterImage.style.top || "50%", 10);
+            const currentLeft = parseInt(characterImage.style.left || "50%", 10);
 
             // Déplacement en fonction de la direction
             switch (direction) {
