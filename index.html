@@ -208,14 +208,14 @@
                 clearInterval(intervalId); // Arrêter le déplacement continu
             }
 
-            // Fonction de déplacement du personnage avec limites
+            // Fonction de déplacement du personnage
             function moveCharacter(direction) {
                 const characterImage = document.getElementById('character-image');
                 let currentPosition = characterImage.getBoundingClientRect();
-                const maxLeft = window.innerWidth - characterImage.offsetWidth;
-                const maxTop = window.innerHeight - characterImage.offsetHeight;
-                const minTop = 0;
-                const minLeft = 0;
+                let minTop = 0;
+                let maxTop = window.innerHeight - characterImage.offsetHeight;
+                let minLeft = 0;
+                let maxLeft = window.innerWidth - characterImage.offsetWidth;
 
                 // Calcul de la nouvelle position en fonction de la direction
                 switch(direction) {
@@ -246,6 +246,7 @@
             // Si aucun personnage n'est passé dans l'URL
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
         }
+
     </script>
 </body>
 </html>
