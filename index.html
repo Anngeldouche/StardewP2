@@ -97,6 +97,10 @@
         const displayElement = document.getElementById('character-display');
 
         let currentDirection = 'front'; // Position initiale : avant (front)
+        let isUpPressed = false;
+        let isDownPressed = false;
+        let isLeftPressed = false;
+        let isRightPressed = false;
 
         if (characterId && image) {
             const characterName = copains[characterId] || "Copain inconnu";
@@ -147,7 +151,7 @@
         }
 
         // Fonction de déplacement du personnage
-        function moveCharacter(direction) {
+        function moveCharacter() {
             const characterImage = document.getElementById('character-image');
             if (!characterImage) return;
 
@@ -156,79 +160,74 @@
             const currentTop = parseInt(characterImage.style.top || "50%", 10);
             const currentLeft = parseInt(characterImage.style.left || "50%", 10);
 
-            switch (direction) {
-                case 'up':
-                    characterImage.style.top = `${currentTop - step}%`;
-                    currentDirection = 'back';
-                    break;
-                case 'down':
-                    characterImage.style.top = `${currentTop + step}%`;
-                    currentDirection = 'front';
-                    break;
-                case 'left':
-                    characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'left';
-                    break;
-                case 'right':
-                    characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'right';
-                    break;
-                case 'down-left':
-                    characterImage.style.top = `${currentTop + step}%`;
-                    characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'down-left';
-                    break;
-                case 'up-left':
-                    characterImage.style.top = `${currentTop - step}%`;
-                    characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'up-left';
-                    break;
-                case 'down-right':
-                    characterImage.style.top = `${currentTop + step}%`;
-                    characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'down-right';
-                    break;
-                case 'up-right':
-                    characterImage.style.top = `${currentTop - step}%`;
-                    characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'up-right';
-                    break;
-                default:
-                    currentDirection = 'front';
-                    break;
+            if (isUpPressed && isLeftPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'up-left';
+            } else if (isUpPressed && isRightPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'up-right';
+            } else if (isDownPressed && isLeftPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'down-left';
+            } else if (isDownPressed && isRightPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'down-right';
+            } else if (isUpPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                currentDirection = 'back';
+            } else if (isDownPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                currentDirection = 'front';
+            } else if (isLeftPressed) {
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'left';
+            } else if (isRightPressed) {
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'right';
             }
 
             updateCharacterImage();
         }
 
-        // Ajouter des événements pour les boutons
-        document.getElementById('up').addEventListener('click', () => moveCharacter('up'));
-        document.getElementById('down').addEventListener('click', () => moveCharacter('down'));
-        document.getElementById('left').addEventListener('click', () => moveCharacter('left'));
-        document.getElementById('right').addEventListener('click', () => moveCharacter('right'));
-
-        // Déplacement en continu avec les touches directionnelles du clavier
-        let moveInterval;
+        // Gestion des événements du clavier
         window.addEventListener('keydown', (event) => {
-            if (moveInterval) return;
-
-            if (event.key === 'ArrowUp' && event.key === 'ArrowLeft') {
-                moveInterval = setInterval(() => moveCharacter('up-left'), 50);
+            switch (event.key) {
+                case 'ArrowUp':
+                    isUpPressed = true;
+                    break;
+                case 'ArrowDown':
+                    isDownPressed = true;
+                    break;
+                case 'ArrowLeft':
+                    isLeftPressed = true;
+                    break;
+                case 'ArrowRight':
+                    isRightPressed = true;
+                    break;
             }
-            if (event.key === 'ArrowUp' && event.key === 'ArrowRight') {
-                moveInterval = setInterval(() => moveCharacter('up-right'), 50);
-            }
-            if (event.key === 'ArrowDown' && event.key === 'ArrowLeft') {
-                moveInterval = setInterval(() => moveCharacter('down-left'), 50);
-            }
-            if (event.key === 'ArrowDown' && event.key === 'ArrowRight') {
-                moveInterval = setInterval(() => moveCharacter('down-right'), 50);
-            }
+            moveCharacter();
         });
 
-        window.addEventListener('keyup', () => {
-            clearInterval(moveInterval);
-            moveInterval = null;
+        window.addEventListener('keyup', (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+                    isUpPressed = false;
+                    break;
+                case 'ArrowDown':
+                    isDownPressed = false;
+                    break;
+                case 'ArrowLeft':
+                    isLeftPressed = false;
+                    break;
+                case 'ArrowRight':
+                    isRightPressed = false;
+                    break;
+            }
+            moveCharacter();
         });
 
         // Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
@@ -245,6 +244,3 @@
     </script>
 </body>
 </html>
-
-
-
