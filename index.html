@@ -143,9 +143,9 @@
             const characterImage = document.getElementById('character-image');
             if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
 
-            const step = 10; // Distance de déplacement en pixels
+            const step = 1; // Déplacement d'un seul pixel à la fois
 
-            // Obtenir les positions actuelles (top/left en pourcentage pour éviter des valeurs fixes)
+            // Obtenir les positions actuelles
             const currentTop = parseInt(characterImage.style.top || "50%", 10);
             const currentLeft = parseInt(characterImage.style.left || "50%", 10);
 
@@ -188,16 +188,16 @@
 
             switch (event.key) {
                 case 'ArrowUp':
-                    moveInterval = setInterval(() => moveCharacter('up'), 50);
+                    moveInterval = setInterval(() => moveCharacter('up'), 10);
                     break;
                 case 'ArrowDown':
-                    moveInterval = setInterval(() => moveCharacter('down'), 50);
+                    moveInterval = setInterval(() => moveCharacter('down'), 10);
                     break;
                 case 'ArrowLeft':
-                    moveInterval = setInterval(() => moveCharacter('left'), 50);
+                    moveInterval = setInterval(() => moveCharacter('left'), 10);
                     break;
                 case 'ArrowRight':
-                    moveInterval = setInterval(() => moveCharacter('right'), 50);
+                    moveInterval = setInterval(() => moveCharacter('right'), 10);
                     break;
             }
         });
@@ -222,4 +222,3 @@
     </script>
 </body>
 </html>
-
