@@ -23,21 +23,29 @@
             position: relative; /* On définit le corps comme référence pour le positionnement absolu */
         }
 
-        /* La maison positionnée en bas, sous le garage mais au-dessus du fond */
+        /* Variables CSS pour la maison */
+        :root {
+            --maison-x: 50%;  /* Position X de la maison */
+            --maison-y: 85%;  /* Position Y de la maison */
+            --maison-width: 300px; /* Largeur de la maison */
+            --maison-height: 300px; /* Hauteur de la maison */
+        }
+
+        /* La maison qui doit être sous le garage mais sur le fond */
         .maison {
             position: absolute;
-            bottom: 0; /* Positionnée tout en bas */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%; /* Ajuste la largeur à ton image */
-            height: 300px; /* Taille de la maison à ajuster selon l'image */
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/maison_image.png'); /* Remplacer par l'URL de la maison */
+            left: var(--maison-x);
+            bottom: var(--maison-y);
+            width: var(--maison-width); /* Largeur ajustable */
+            height: var(--maison-height); /* Hauteur ajustable */
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/Maison.png'); /* URL de la maison */
             background-size: cover;
             background-position: center;
+            transform: translateX(-50%); /* Centrage horizontal */
             z-index: 1; /* La maison reste en dessous du garage mais au-dessus du fond */
         }
 
-        /* Le garage positionné au-dessus de la maison */
+        /* Garage ou autres éléments qui doivent être au-dessus */
         .garage {
             position: absolute;
             top: 10%;
@@ -132,6 +140,12 @@
         // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
+        let currentDirection = 'front'; // Position initiale : avant (front)
+        let isUpPressed = false;
+        let isDownPressed = false;
+        let isLeftPressed = false;
+        let isRightPressed = false;
+
         if (characterId && image) {
             const characterName = copains[characterId] || "Copain inconnu";
             displayElement.innerHTML = ` 
@@ -140,6 +154,44 @@
             `;
         } else {
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+        }
+
+        // Fonction pour changer l'image en fonction de la direction
+        function updateCharacterImage() {
+            const characterImage = document.getElementById('character-image');
+            let imagePath;
+
+            // Choix de l'image en fonction de la direction
+            switch (currentDirection) {
+                case 'front':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
+                    break;
+                case 'back':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png';
+                    break;
+                case 'left':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
+                    break;
+                case 'right':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
+                    break;
+                case 'down-left':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
+                    break;
+                case 'up-left':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
+                    break;
+                case 'down-right':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
+                    break;
+                case 'up-right':
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
+                    break;
+                default:
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
+            }
+
+            characterImage.src = imagePath;
         }
 
         // Fonction de déplacement du personnage
@@ -181,6 +233,8 @@
                 characterImage.style.left = `${currentLeft + step}%`;
                 currentDirection = 'right';
             }
+
+            updateCharacterImage();
         }
 
         // Gestion des événements du clavier
