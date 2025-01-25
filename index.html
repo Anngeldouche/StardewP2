@@ -188,16 +188,16 @@
 
             switch (event.key) {
                 case 'ArrowUp':
-                    moveInterval = setInterval(() => moveCharacter('up'), 10);
+                    moveInterval = setInterval(() => moveCharacter('up'), 50); // Vitesse réduite (50 ms)
                     break;
                 case 'ArrowDown':
-                    moveInterval = setInterval(() => moveCharacter('down'), 10);
+                    moveInterval = setInterval(() => moveCharacter('down'), 50); // Vitesse réduite (50 ms)
                     break;
                 case 'ArrowLeft':
-                    moveInterval = setInterval(() => moveCharacter('left'), 10);
+                    moveInterval = setInterval(() => moveCharacter('left'), 50); // Vitesse réduite (50 ms)
                     break;
                 case 'ArrowRight':
-                    moveInterval = setInterval(() => moveCharacter('right'), 10);
+                    moveInterval = setInterval(() => moveCharacter('right'), 50); // Vitesse réduite (50 ms)
                     break;
             }
         });
