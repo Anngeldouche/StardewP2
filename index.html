@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./pluginAssets/highlight.js/atom-one-light.css">
     <title>StardewPote P2</title>
     <style>
         body {
@@ -26,9 +25,9 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            position: absolute; /* Nécessaire pour déplacer avec top/left */
-            top: 50%; /* Position initiale */
-            left: 50%; /* Position initiale */
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
         }
 
@@ -65,7 +64,6 @@
         <!-- Le personnage sera injecté ici -->
     </div>
 
-    <!-- Croix de déplacement -->
     <div id="joystick-container">
         <button id="up" class="joystick-btn">↑</button>
         <button id="left" class="joystick-btn">←</button>
@@ -74,49 +72,21 @@
     </div>
 
     <script>
-        // Fonction pour récupérer les paramètres d'URL
-        function getUrlParameter(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        // Liste des copains avec leurs noms
-        const copains = {
-            "1": "Angle",
-            "2": "Chim",
-            "3": "Zonzon",
-            "4": "Luc",
-            "5": "Mori"
-        };
-
-        // Récupérer les informations sur le personnage
-        const characterId = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
-
         let currentDirection = 'front'; // Position initiale : avant (front)
+        let characterImage;
 
-        if (characterId && image) {
-            // Obtenir le nom du copain en fonction de l'ID
-            const characterName = copains[characterId] || "Copain inconnu";
-
-            // Afficher le personnage sélectionné
-            displayElement.innerHTML = ` 
-                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Bienvenue ${characterName}</h2>
-            `;
-        } else {
-            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
+        // Initialisation du personnage
+        function initializeCharacter() {
+            characterImage = document.createElement('img');
+            characterImage.src = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image de départ (avant)
+            characterImage.alt = "Personnage sélectionné";
+            displayElement.appendChild(characterImage);
         }
 
         // Fonction pour changer l'image en fonction de la direction
         function updateCharacterImage() {
-            const characterImage = document.getElementById('character-image');
             let imagePath;
-
-            // Selon la direction, choisir l'image appropriée
             switch (currentDirection) {
                 case 'front':
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
@@ -131,44 +101,33 @@
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
                     break;
                 default:
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
             }
-
-            // Mise à jour de l'image
             characterImage.src = imagePath;
         }
 
         // Fonction de déplacement du personnage
         function moveCharacter(direction) {
-            const characterImage = document.getElementById('character-image');
-            if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
-
             const step = 10; // Distance de déplacement en pixels
-
-            // Obtenir les positions actuelles
             const currentTop = parseInt(characterImage.style.top || "50%", 10);
             const currentLeft = parseInt(characterImage.style.left || "50%", 10);
 
-            // Déplacement en fonction de la direction
             switch (direction) {
                 case 'up':
                     characterImage.style.top = `${currentTop - step}px`;
-                    currentDirection = 'back'; // Image pour le dos
+                    currentDirection = 'back';
                     break;
                 case 'down':
                     characterImage.style.top = `${currentTop + step}px`;
-                    currentDirection = 'front'; // Image pour l'avant
+                    currentDirection = 'front';
                     break;
                 case 'left':
                     characterImage.style.left = `${currentLeft - step}px`;
-                    currentDirection = 'left'; // Image pour la gauche
+                    currentDirection = 'left';
                     break;
                 case 'right':
                     characterImage.style.left = `${currentLeft + step}px`;
-                    currentDirection = 'right'; // Image pour la droite
-                    break;
-                default:
-                    currentDirection = 'front'; // Si aucune direction définie, image par défaut
+                    currentDirection = 'right';
                     break;
             }
 
@@ -182,43 +141,25 @@
         document.getElementById('right').addEventListener('click', () => moveCharacter('right'));
 
         // Déplacement en continu avec les touches directionnelles du clavier
-        let moveInterval;
         window.addEventListener('keydown', (event) => {
-            if (moveInterval) return; // Si un mouvement est déjà en cours, ne pas répéter
-
             switch (event.key) {
                 case 'ArrowUp':
-                    moveInterval = setInterval(() => moveCharacter('up'), 50);
+                    moveCharacter('up');
                     break;
                 case 'ArrowDown':
-                    moveInterval = setInterval(() => moveCharacter('down'), 50);
+                    moveCharacter('down');
                     break;
                 case 'ArrowLeft':
-                    moveInterval = setInterval(() => moveCharacter('left'), 50);
+                    moveCharacter('left');
                     break;
                 case 'ArrowRight':
-                    moveInterval = setInterval(() => moveCharacter('right'), 50);
+                    moveCharacter('right');
                     break;
             }
         });
 
-        window.addEventListener('keyup', () => {
-            clearInterval(moveInterval);
-            moveInterval = null;
-        });
-
-        // Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                event.preventDefault(); // Empêcher le défilement
-            }
-        });
-
-        // Bloquer le défilement de la page avec la molette de la souris
-        window.addEventListener('wheel', (event) => {
-            event.preventDefault(); // Empêche le défilement de la page
-        }, { passive: false });
-
+        // Initialisation du personnage
+        initializeCharacter();
     </script>
 </body>
 </html>
