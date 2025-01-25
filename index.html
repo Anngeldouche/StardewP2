@@ -23,42 +23,6 @@
             position: relative;
         }
 
-        /* Variables CSS pour la maison */
-        :root {
-            --maison-x: 12%;
-            --maison-y: 40%;
-            --maison-width: 350px;
-            --maison-height: 350px;
-        }
-
-        /* La maison */
-        .maison {
-            position: absolute;
-            left: var(--maison-x);
-            bottom: var(--maison-y);
-            width: var(--maison-width);
-            height: var(--maison-height);
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/Maison.png');
-            background-size: cover;
-            background-position: center;
-            transform: translateX(-50%);
-            z-index: 1;
-        }
-
-        /* Garage fermé, placé au-dessus de la maison */
-        .garage {
-            position: absolute;
-            left: var(--maison-x);
-            bottom: var(--maison-y);
-            width: var(--maison-width);
-            height: var(--maison-height);
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png'); /* Garage fermé par défaut */
-            background-size: cover;
-            background-position: center;
-            transform: translateX(-50%);
-            z-index: 2;
-        }
-
         .character-display img {
             width: 150px;
             height: 150px;
@@ -100,8 +64,6 @@
     </style>
 </head>
 <body>
-    <div class="maison"></div>
-    <div class="garage" id="garage"></div>
 
     <div class="character-display" id="character-display">
         <!-- Le personnage sera injecté ici -->
@@ -168,41 +130,11 @@
                 case 'right':
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
                     break;
-                case 'up-left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png'; // Profil gauche pour haut-gauche
-                    break;
-                case 'up-right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png'; // Profil droit pour haut-droit
-                    break;
-                case 'down-left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png'; // Profil gauche pour bas-gauche
-                    break;
-                case 'down-right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png'; // Profil droit pour bas-droit
-                    break;
                 default:
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
             }
 
             characterImage.src = imagePath;
-        }
-
-        // Animation de la porte du garage
-        const garage = document.getElementById("garage");
-        let garageState = 1; // 1 = fermé, 2 = partiellement ouvert, 3 = complètement ouvert
-
-        function changeGarageState() {
-            switch (garageState) {
-                case 1:
-                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png")'; // Garage fermé
-                    break;
-                case 2:
-                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage2.png")'; // Garage partiellement ouvert
-                    break;
-                case 3:
-                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage3.png")'; // Garage complètement ouvert
-                    break;
-            }
         }
 
         // Fonction de déplacement du personnage
@@ -246,19 +178,6 @@
             }
 
             updateCharacterImage();
-
-            // Si le personnage est à proximité de la porte, ouvrez-la progressivement
-            if (currentTop < 30 && currentLeft < 30) {
-                if (garageState < 3) {
-                    garageState++;
-                    changeGarageState();
-                }
-            } else {
-                if (garageState > 1) {
-                    garageState--;
-                    changeGarageState();
-                }
-            }
         }
 
         window.addEventListener('keydown', (event) => {
