@@ -64,9 +64,9 @@
 
         .door {
             position: absolute;
-            top: 50%;  /* 30% de la hauteur de l'image de fond */
-            left: 10%;  /* Plus près du bord gauche (10% de la largeur de l'image de fond) */
-            transform: translate(-50%, -50%) scale(0.2); /* Réduire de 80% */
+            top: 60%;  /* Déplacer la porte plus bas */
+            left: 10%;  /* Placer la porte plus à gauche */
+            transform: translate(-50%, -50%) scale(0.2); /* Réduire la taille de la porte */
             cursor: pointer;
             z-index: 2;
         }
@@ -85,7 +85,7 @@
         <button id="down" class="joystick-btn">↓</button>
     </div>
 
-    <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/PorteFermeeBrune.png" id="door" class="door" onclick="openDoor()"/>
+    <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/PorteFermeeBrune.png" id="door" class="door" onclick="tryOpenDoor()"/>
 
     <script>
         // Fonction pour récupérer les paramètres d'URL
@@ -236,6 +236,36 @@
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
+
+        // Fonction pour vérifier si le personnage est devant la porte
+        function isCharacterNearDoor() {
+            const characterImage = document.getElementById('character-image');
+            const door = document.getElementById('door');
+            
+            // Récupérer la position du personnage
+            const charTop = parseInt(characterImage.style.top || "50%", 10);
+            const charLeft = parseInt(characterImage.style.left || "50%", 10);
+            
+            // Récupérer la position de la porte
+            const doorTop = parseInt(door.style.top, 10);
+            const doorLeft = parseInt(door.style.left, 10);
+            
+            // Vérifier si le personnage est assez proche de la porte (par exemple, dans un rayon de 20%)
+            const distanceTop = Math.abs(charTop - doorTop);
+            const distanceLeft = Math.abs(charLeft - doorLeft);
+            
+            // Si la distance est assez petite, on considère que le personnage est devant la porte
+            return distanceTop < 5 && distanceLeft < 5;
+        }
+
+        // Fonction pour ouvrir la porte si le personnage est près
+        function tryOpenDoor() {
+            if (isCharacterNearDoor()) {
+                openDoor();
+            } else {
+                alert("Tu n'es pas assez près de la porte !");
+            }
+        }
 
         // Fonction pour ouvrir la porte
         function openDoor() {
