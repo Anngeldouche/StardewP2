@@ -237,25 +237,20 @@
             event.preventDefault();
         }, { passive: false });
 
-        // Fonction pour vérifier si le personnage est devant la porte
+        // Fonction pour vérifier la proximité du personnage à la porte
         function isCharacterNearDoor() {
             const characterImage = document.getElementById('character-image');
             const door = document.getElementById('door');
-            
-            // Récupérer la position du personnage
-            const charTop = parseInt(characterImage.style.top || "50%", 10);
-            const charLeft = parseInt(characterImage.style.left || "50%", 10);
-            
-            // Récupérer la position de la porte
-            const doorTop = parseInt(door.style.top, 10);
-            const doorLeft = parseInt(door.style.left, 10);
-            
-            // Vérifier si le personnage est assez proche de la porte (par exemple, dans un rayon de 20%)
-            const distanceTop = Math.abs(charTop - doorTop);
-            const distanceLeft = Math.abs(charLeft - doorLeft);
-            
-            // Si la distance est assez petite, on considère que le personnage est devant la porte
-            return distanceTop < 5 && distanceLeft < 5;
+
+            // Récupérer les positions et tailles du personnage et de la porte
+            const charRect = characterImage.getBoundingClientRect();
+            const doorRect = door.getBoundingClientRect();
+
+            // Vérifier si le personnage touche la porte
+            const isTouchingHorizontally = charRect.right > doorRect.left && charRect.left < doorRect.right;
+            const isTouchingVertically = charRect.bottom > doorRect.top && charRect.top < doorRect.bottom;
+
+            return isTouchingHorizontally && isTouchingVertically;
         }
 
         // Fonction pour ouvrir la porte si le personnage est près
