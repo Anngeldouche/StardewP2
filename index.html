@@ -20,37 +20,36 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            position: relative;
+            position: relative; /* On définit le corps comme référence pour le positionnement absolu */
         }
 
-        /* La maison placée sous le garage mais au-dessus du fond */
+        /* La maison positionnée en bas, sous le garage mais au-dessus du fond */
         .maison {
             position: absolute;
-            bottom: 0; /* La maison est en bas de la fenêtre */
+            bottom: 0; /* Positionnée tout en bas */
             left: 50%;
             transform: translateX(-50%);
-            width: 100%; /* Ajuster la taille de la maison */
-            height: 300px; /* Ajuster selon l'image de la maison */
+            width: 100%; /* Ajuste la largeur à ton image */
+            height: 300px; /* Taille de la maison à ajuster selon l'image */
             background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/maison_image.png'); /* Remplacer par l'URL de la maison */
             background-size: cover;
             background-position: center;
-            z-index: 1; /* Maison juste au-dessus du fond */
+            z-index: 1; /* La maison reste en dessous du garage mais au-dessus du fond */
         }
 
-        /* Garage placé au-dessus de la maison */
+        /* Le garage positionné au-dessus de la maison */
         .garage {
             position: absolute;
-            top: 10%; /* Placer le garage où tu veux */
+            top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px; /* Ajuster selon la taille du garage */
+            width: 200px; /* Ajuste selon ta taille */
             height: 200px;
             background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/garage_image.png'); /* Remplacer par l'URL du garage */
             background-size: cover;
-            z-index: 2; /* Garage au-dessus de la maison */
+            z-index: 2; /* Le garage au-dessus de la maison */
         }
 
-        /* Personnage qui doit être placé au-dessus du garage et de la maison */
         .character-display img {
             width: 150px;
             height: 150px;
@@ -59,7 +58,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 3; /* Personnage au-dessus de tout */
+            z-index: 3; /* Le personnage au-dessus de la maison et du garage */
         }
 
         #joystick-container {
@@ -92,21 +91,17 @@
     </style>
 </head>
 <body>
-    <!-- Fond de l'écran -->
-    <div class="fond"></div>
-
-    <!-- La maison -->
+    <!-- La maison en bas, sous le garage mais au-dessus du fond -->
     <div class="maison"></div>
 
-    <!-- Le garage -->
+    <!-- Le garage placé au-dessus de la maison -->
     <div class="garage"></div>
 
-    <!-- Le personnage -->
     <div class="character-display" id="character-display">
         <!-- Le personnage sera injecté ici -->
     </div>
 
-    <!-- Joystick de déplacement -->
+    <!-- Croix de déplacement -->
     <div id="joystick-container">
         <button id="up" class="joystick-btn">↑</button>
         <button id="left" class="joystick-btn">←</button>
@@ -145,32 +140,6 @@
             `;
         } else {
             displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
-        }
-
-        // Fonction pour changer l'image en fonction de la direction
-        function updateCharacterImage() {
-            const characterImage = document.getElementById('character-image');
-            let imagePath;
-
-            // Choix de l'image en fonction de la direction
-            switch (currentDirection) {
-                case 'front':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
-                    break;
-                case 'back':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copains8B(1)B.png';
-                    break;
-                case 'left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copains8B(1)G.png';
-                    break;
-                case 'right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copains8B(1)D.png';
-                    break;
-                default:
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
-            }
-
-            characterImage.src = imagePath;
         }
 
         // Fonction de déplacement du personnage
@@ -212,8 +181,6 @@
                 characterImage.style.left = `${currentLeft + step}%`;
                 currentDirection = 'right';
             }
-
-            updateCharacterImage();
         }
 
         // Gestion des événements du clavier
@@ -253,14 +220,14 @@
             moveCharacter();
         });
 
-        // Bloquer le défilement de la page
+        // Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
         window.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
                 event.preventDefault();
             }
         });
 
-        // Bloquer le défilement avec la molette
+        // Bloquer le défilement de la page avec la molette de la souris
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
