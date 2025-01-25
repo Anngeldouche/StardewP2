@@ -70,6 +70,14 @@
             cursor: pointer;
             z-index: 2;
         }
+
+        .house-background {
+            position: absolute;
+            top: 60%;  /* Même position que la porte */
+            left: 10%;  /* Même position que la porte */
+            transform: translate(-50%, -50%) scale(0.2); /* Même taille que la porte */
+            z-index: 1; /* La maison est derrière la porte */
+        }
     </style>
 </head>
 <body>
@@ -84,6 +92,9 @@
         <button id="right" class="joystick-btn">→</button>
         <button id="down" class="joystick-btn">↓</button>
     </div>
+
+    <!-- Image de la maison en arrière-plan -->
+    <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/MaisonBrune.png" id="house-background" class="house-background"/>
 
     <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/PorteFermeeBrune.png" id="door" class="door" onclick="tryOpenDoor()"/>
 
