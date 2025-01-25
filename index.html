@@ -61,6 +61,15 @@
         .joystick-btn:active {
             background-color: rgba(0, 0, 0, 0.8);
         }
+
+        .door {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +84,8 @@
         <button id="right" class="joystick-btn">→</button>
         <button id="down" class="joystick-btn">↓</button>
     </div>
+
+    <img src="https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/PorteFermeeBrune.png" id="door" class="door" onclick="openDoor()"/>
 
     <script>
         // Fonction pour récupérer les paramètres d'URL
@@ -225,6 +236,15 @@
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
+
+        // Fonction pour ouvrir la porte
+        function openDoor() {
+            document.getElementById('door').src = "https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/MaisonBit/PorteOuverteBrune.png";
+            setTimeout(() => {
+                window.location.href = "https://anngeldouche.github.io/P3-StardewPotes/pageSuivante.html?character=" + characterId + "&image=" + image;
+            }, 500); // Après 0.5 seconde, on redirige vers la nouvelle page
+        }
     </script>
+
 </body>
 </html>
