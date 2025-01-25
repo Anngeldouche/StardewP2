@@ -46,46 +46,17 @@
         }
 
         /* Garage fermé, placé au-dessus de la maison */
-        .garage-1 {
+        .garage {
             position: absolute;
             left: var(--maison-x);
             bottom: var(--maison-y);
             width: var(--maison-width);
             height: var(--maison-height);
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png'); /* Image du garage fermé */
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png'); /* Garage fermé par défaut */
             background-size: cover;
             background-position: center;
             transform: translateX(-50%);
             z-index: 2;
-            display: block;
-        }
-
-        .garage-2 {
-            position: absolute;
-            left: var(--maison-x);
-            bottom: var(--maison-y);
-            width: var(--maison-width);
-            height: var(--maison-height);
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage2.png'); /* Image du garage partiellement ouvert */
-            background-size: cover;
-            background-position: center;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: none;
-        }
-
-        .garage-3 {
-            position: absolute;
-            left: var(--maison-x);
-            bottom: var(--maison-y);
-            width: var(--maison-width);
-            height: var(--maison-height);
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage3.png'); /* Image du garage complètement ouvert */
-            background-size: cover;
-            background-position: center;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: none;
         }
 
         .character-display img {
@@ -130,9 +101,7 @@
 </head>
 <body>
     <div class="maison"></div>
-    <div class="garage-1"></div>
-    <div class="garage-2"></div>
-    <div class="garage-3"></div>
+    <div class="garage" id="garage"></div>
 
     <div class="character-display" id="character-display">
         <!-- Le personnage sera injecté ici -->
@@ -206,39 +175,80 @@
             characterImage.src = imagePath;
         }
 
-        // Fonction de détection de la position du personnage par rapport au garage
-        function checkGaragePosition() {
-            const characterImage = document.getElementById('character-image');
-            if (!characterImage) return;
+        // Animation de la porte du garage
+        const garage = document.getElementById("garage");
+        let garageState = 1; // 1 = fermé, 2 = partiellement ouvert, 3 = complètement ouvert
 
-            // On calcule la position du personnage
-            const characterRect = characterImage.getBoundingClientRect();
-            const garageRect = document.querySelector('.maison').getBoundingClientRect();
-
-            const characterCenterX = characterRect.left + characterRect.width / 2;
-            const garageCenterX = garageRect.left + garageRect.width / 2;
-
-            // Si le personnage est proche du garage, ouvrir la porte
-            if (Math.abs(characterCenterX - garageCenterX) < 50) {
-                // Transition de l'animation d'ouverture de la porte
-                document.querySelector('.garage-1').style.display = 'none';
-                document.querySelector('.garage-2').style.display = 'block';
-                setTimeout(() => {
-                    document.querySelector('.garage-2').style.display = 'none';
-                    document.querySelector('.garage-3').style.display = 'block';
-                }, 1000);
-            } else {
-                // Transition de fermeture de la porte
-                document.querySelector('.garage-3').style.display = 'none';
-                document.querySelector('.garage-2').style.display = 'block';
-                setTimeout(() => {
-                    document.querySelector('.garage-2').style.display = 'none';
-                    document.querySelector('.garage-1').style.display = 'block';
-                }, 1000);
+        function changeGarageState() {
+            switch (garageState) {
+                case 1:
+                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png")'; // Garage fermé
+                    break;
+                case 2:
+                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage2.png")'; // Garage partiellement ouvert
+                    break;
+                case 3:
+                    garage.style.backgroundImage = 'url("https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage3.png")'; // Garage complètement ouvert
+                    break;
             }
         }
 
-        // Appeler la fonction de vérification du garage à chaque mouvement
+        // Fonction de déplacement du personnage
+        function moveCharacter() {
+            const characterImage = document.getElementById('character-image');
+            if (!characterImage) return;
+
+            const step = 1;
+
+            const currentTop = parseInt(characterImage.style.top || "50%", 10);
+            const currentLeft = parseInt(characterImage.style.left || "50%", 10);
+
+            if (isUpPressed && isLeftPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'up-left';
+            } else if (isUpPressed && isRightPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'up-right';
+            } else if (isDownPressed && isLeftPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'down-left';
+            } else if (isDownPressed && isRightPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'down-right';
+            } else if (isUpPressed) {
+                characterImage.style.top = `${currentTop - step}%`;
+                currentDirection = 'back';
+            } else if (isDownPressed) {
+                characterImage.style.top = `${currentTop + step}%`;
+                currentDirection = 'front';
+            } else if (isLeftPressed) {
+                characterImage.style.left = `${currentLeft - step}%`;
+                currentDirection = 'left';
+            } else if (isRightPressed) {
+                characterImage.style.left = `${currentLeft + step}%`;
+                currentDirection = 'right';
+            }
+
+            updateCharacterImage();
+
+            // Si le personnage se rapproche, ouvre progressivement le garage
+            if (currentTop < 30 && currentLeft < 30) {
+                if (garageState < 3) {
+                    garageState++;
+                    changeGarageState();
+                }
+            } else {
+                if (garageState > 1) {
+                    garageState--;
+                    changeGarageState();
+                }
+            }
+        }
+
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'ArrowUp':
@@ -275,10 +285,15 @@
             moveCharacter();
         });
 
-        function moveCharacter() {
-            // Implémente le déplacement du personnage
-            checkGaragePosition();  // Vérifie la position par rapport au garage après chaque mouvement
-        }
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+            }
+        });
+
+        window.addEventListener('wheel', (event) => {
+            event.preventDefault();
+        }, { passive: false });
     </script>
 </body>
 </html>
