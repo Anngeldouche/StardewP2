@@ -20,42 +20,43 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            position: relative; /* On définit le corps comme référence pour le positionnement absolu */
+            position: relative;
         }
 
         /* Variables CSS pour la maison */
         :root {
-            --maison-x: 12%;  /* Position X de la maison */
-            --maison-y: 40%;  /* Position Y de la maison */
-            --maison-width: 350px; /* Largeur de la maison */
-            --maison-height: 350px; /* Hauteur de la maison */
+            --maison-x: 12%;
+            --maison-y: 40%;
+            --maison-width: 350px;
+            --maison-height: 350px;
         }
 
-        /* La maison qui doit être sous le garage mais sur le fond */
+        /* La maison */
         .maison {
             position: absolute;
             left: var(--maison-x);
             bottom: var(--maison-y);
-            width: var(--maison-width); /* Largeur ajustable */
-            height: var(--maison-height); /* Hauteur ajustable */
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/Maison.png'); /* URL de la maison */
+            width: var(--maison-width);
+            height: var(--maison-height);
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/Maison.png');
             background-size: cover;
             background-position: center;
-            transform: translateX(-50%); /* Centrage horizontal */
-            z-index: 1; /* La maison reste en dessous du garage mais au-dessus du fond */
+            transform: translateX(-50%);
+            z-index: 1;
         }
 
-        /* Garage ou autres éléments qui doivent être au-dessus */
+        /* Garage fermé, placé au-dessus de la maison */
         .garage {
             position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px; /* Ajuste selon ta taille */
-            height: 200px;
-            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/garage_image.png'); /* Remplacer par l'URL du garage */
+            left: var(--maison-x);
+            bottom: var(--maison-y);
+            width: var(--maison-width);
+            height: var(--maison-height);
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png'); /* Image du garage fermé */
             background-size: cover;
-            z-index: 2; /* Le garage au-dessus de la maison */
+            background-position: center;
+            transform: translateX(-50%);
+            z-index: 2;
         }
 
         .character-display img {
@@ -66,7 +67,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 3; /* Le personnage au-dessus de la maison et du garage */
+            z-index: 3;
         }
 
         #joystick-container {
@@ -79,7 +80,7 @@
             gap: 10px;
             justify-items: center;
             align-items: center;
-            z-index: 4; /* Joystick au-dessus de tout */
+            z-index: 4;
         }
 
         .joystick-btn {
@@ -99,17 +100,13 @@
     </style>
 </head>
 <body>
-    <!-- La maison en bas, sous le garage mais au-dessus du fond -->
     <div class="maison"></div>
-
-    <!-- Le garage placé au-dessus de la maison -->
     <div class="garage"></div>
 
     <div class="character-display" id="character-display">
         <!-- Le personnage sera injecté ici -->
     </div>
 
-    <!-- Croix de déplacement -->
     <div id="joystick-container">
         <button id="up" class="joystick-btn">↑</button>
         <button id="left" class="joystick-btn">←</button>
@@ -133,14 +130,11 @@
             "5": "Mori"
         };
 
-        // Récupérer les informations sur le personnage
         const characterId = getUrlParameter('character');
         const image = getUrlParameter('image');
-
-        // Sélection de l'élément où afficher le personnage
         const displayElement = document.getElementById('character-display');
 
-        let currentDirection = 'front'; // Position initiale : avant (front)
+        let currentDirection = 'front';
         let isUpPressed = false;
         let isDownPressed = false;
         let isLeftPressed = false;
@@ -161,7 +155,6 @@
             const characterImage = document.getElementById('character-image');
             let imagePath;
 
-            // Choix de l'image en fonction de la direction
             switch (currentDirection) {
                 case 'front':
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
@@ -175,20 +168,8 @@
                 case 'right':
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
                     break;
-                case 'down-left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
-                    break;
-                case 'up-left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
-                    break;
-                case 'down-right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
-                    break;
-                case 'up-right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
-                    break;
                 default:
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
+                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
             }
 
             characterImage.src = imagePath;
@@ -199,7 +180,7 @@
             const characterImage = document.getElementById('character-image');
             if (!characterImage) return;
 
-            const step = 1; // Déplacement d'un seul pixel
+            const step = 1;
 
             const currentTop = parseInt(characterImage.style.top || "50%", 10);
             const currentLeft = parseInt(characterImage.style.left || "50%", 10);
@@ -237,7 +218,6 @@
             updateCharacterImage();
         }
 
-        // Gestion des événements du clavier
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'ArrowUp':
@@ -274,14 +254,12 @@
             moveCharacter();
         });
 
-        // Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
         window.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
                 event.preventDefault();
             }
         });
 
-        // Bloquer le défilement de la page avec la molette de la souris
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
