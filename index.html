@@ -26,9 +26,9 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            position: absolute; /* Nécessaire pour déplacer avec top/left */
-            top: 50%; /* Position initiale */
-            left: 50%; /* Position initiale */
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
         }
 
@@ -99,10 +99,7 @@
         let currentDirection = 'front'; // Position initiale : avant (front)
 
         if (characterId && image) {
-            // Obtenir le nom du copain en fonction de l'ID
             const characterName = copains[characterId] || "Copain inconnu";
-
-            // Afficher le personnage sélectionné
             displayElement.innerHTML = ` 
                 <img src="${image}" alt="Personnage sélectionné" id="character-image" />
                 <h2>Bienvenue ${characterName}</h2>
@@ -116,7 +113,7 @@
             const characterImage = document.getElementById('character-image');
             let imagePath;
 
-            // Selon la direction, choisir l'image appropriée
+            // Choix de l'image en fonction de la direction
             switch (currentDirection) {
                 case 'front':
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
@@ -146,65 +143,62 @@
                     imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
             }
 
-            // Mise à jour de l'image
             characterImage.src = imagePath;
         }
 
         // Fonction de déplacement du personnage
         function moveCharacter(direction) {
             const characterImage = document.getElementById('character-image');
-            if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
+            if (!characterImage) return;
 
-            const step = 1; // Déplacement d'un seul pixel à la fois
+            const step = 1; // Déplacement d'un seul pixel
 
-            // Obtenir les positions actuelles
             const currentTop = parseInt(characterImage.style.top || "50%", 10);
             const currentLeft = parseInt(characterImage.style.left || "50%", 10);
 
-            // Déplacement en fonction de la direction
             switch (direction) {
                 case 'up':
                     characterImage.style.top = `${currentTop - step}%`;
-                    currentDirection = 'back'; // Image pour le dos
+                    currentDirection = 'back';
                     break;
                 case 'down':
                     characterImage.style.top = `${currentTop + step}%`;
-                    currentDirection = 'front'; // Image pour l'avant
+                    currentDirection = 'front';
                     break;
                 case 'left':
                     characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'left'; // Image pour la gauche
+                    currentDirection = 'left';
                     break;
                 case 'right':
                     characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'right'; // Image pour la droite
+                    currentDirection = 'right';
                     break;
                 case 'down-left':
                     characterImage.style.top = `${currentTop + step}%`;
                     characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'down-left'; // Image pour bas et gauche
+                    currentDirection = 'down-left';
                     break;
                 case 'up-left':
                     characterImage.style.top = `${currentTop - step}%`;
                     characterImage.style.left = `${currentLeft - step}%`;
-                    currentDirection = 'up-left'; // Image pour haut et gauche
+                    currentDirection = 'up-left';
                     break;
                 case 'down-right':
                     characterImage.style.top = `${currentTop + step}%`;
                     characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'down-right'; // Image pour bas et droite
+                    currentDirection = 'down-right';
                     break;
                 case 'up-right':
                     characterImage.style.top = `${currentTop - step}%`;
                     characterImage.style.left = `${currentLeft + step}%`;
-                    currentDirection = 'up-right'; // Image pour haut et droite
+                    currentDirection = 'up-right';
                     break;
                 default:
-                    currentDirection = 'front'; // Si aucune direction définie, image par défaut
+                    currentDirection = 'front';
                     break;
             }
 
-            updateCharacterImage(); // Mise à jour de l'image après le déplacement
+            updateCharacterImage();
         }
 
         // Ajouter des événements pour les boutons
@@ -216,21 +210,19 @@
         // Déplacement en continu avec les touches directionnelles du clavier
         let moveInterval;
         window.addEventListener('keydown', (event) => {
-            if (moveInterval) return; // Si un mouvement est déjà en cours, ne pas répéter
+            if (moveInterval) return;
 
-            switch (event.key) {
-                case 'ArrowUp':
-                    moveInterval = setInterval(() => moveCharacter('up'), 50);
-                    break;
-                case 'ArrowDown':
-                    moveInterval = setInterval(() => moveCharacter('down'), 50);
-                    break;
-                case 'ArrowLeft':
-                    moveInterval = setInterval(() => moveCharacter('left'), 50);
-                    break;
-                case 'ArrowRight':
-                    moveInterval = setInterval(() => moveCharacter('right'), 50);
-                    break;
+            if (event.key === 'ArrowUp' && event.key === 'ArrowLeft') {
+                moveInterval = setInterval(() => moveCharacter('up-left'), 50);
+            }
+            if (event.key === 'ArrowUp' && event.key === 'ArrowRight') {
+                moveInterval = setInterval(() => moveCharacter('up-right'), 50);
+            }
+            if (event.key === 'ArrowDown' && event.key === 'ArrowLeft') {
+                moveInterval = setInterval(() => moveCharacter('down-left'), 50);
+            }
+            if (event.key === 'ArrowDown' && event.key === 'ArrowRight') {
+                moveInterval = setInterval(() => moveCharacter('down-right'), 50);
             }
         });
 
@@ -242,15 +234,17 @@
         // Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
         window.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                event.preventDefault(); // Empêcher le défilement
+                event.preventDefault();
             }
         });
 
         // Bloquer le défilement de la page avec la molette de la souris
         window.addEventListener('wheel', (event) => {
-            event.preventDefault(); // Empêche le défilement de la page
+            event.preventDefault();
         }, { passive: false });
-
     </script>
 </body>
 </html>
+
+
+
