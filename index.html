@@ -58,6 +58,16 @@
         .joystick-btn:active {
             background-color: rgba(0, 0, 0, 0.8);
         }
+
+        #garage-door {
+            position: absolute;
+            top: 50%; /* Position du garage */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px; /* Taille de la porte */
+            height: 100px; /* Taille de la porte */
+            background-size: cover;
+        }
     </style>
 </head>
 <body>
@@ -241,6 +251,34 @@
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
+
+        // Gestion de l'ouverture et fermeture de la porte du garage
+        const garageDoor = document.createElement('div');
+        garageDoor.id = "garage-door";
+        garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png)';
+        document.body.appendChild(garageDoor);
+
+        // Zone de détection du garage
+        const garageZone = { left: 40, top: 40, width: 200, height: 200 }; // Définir la zone devant le garage
+
+        function updateGarageDoor() {
+            const characterImage = document.getElementById('character-image');
+            const characterTop = parseInt(characterImage.style.top || "50%", 10);
+            const characterLeft = parseInt(characterImage.style.left || "50%", 10);
+
+            // Vérifier si le personnage est dans la zone du garage
+            if (characterLeft >= garageZone.left && characterLeft <= (garageZone.left + garageZone.width) &&
+                characterTop >= garageZone.top && characterTop <= (garageZone.top + garageZone.height)) {
+                // Ouvrir la porte (image 2 puis 3)
+                garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage2.png)';
+            } else {
+                // Fermer la porte (image 3 puis 2 puis 1)
+                garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png)';
+            }
+        }
+
+        setInterval(updateGarageDoor, 50);  // Mettre à jour la porte toutes les 50 ms
+
     </script>
 </body>
 </html>
