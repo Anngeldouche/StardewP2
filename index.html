@@ -1,212 +1,30 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./pluginAssets/highlight.js/atom-one-light.css">
-    <title>StardewPote P2</title>
-    <style>
-        body {
-            margin: 0;
-            font-size: 15px;
-            color: #32373F;
-            word-wrap: break-word;
-            line-height: 1.6em;
-            background-color: #d3f8d8;
-            font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
-            padding: 20px;
-            min-height: 100vh;
-            background-image: url('./Copainbits/FondWds.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+// Bloquer le défilement de la page lorsqu'on utilise les flèches du clavier
+window.addEventListener('keydown', (event) => {
+    // Empêcher le défilement avec les touches fléchées
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+    }
 
-        .character-display img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            position: absolute; /* Nécessaire pour déplacer avec top/left */
-            top: 50%; /* Position initiale */
-            left: 50%; /* Position initiale */
-            transform: translate(-50%, -50%);
-        }
+    // Déplacement en continu avec les touches directionnelles du clavier
+    if (moveInterval) return; // Si un mouvement est déjà en cours, ne pas répéter
 
-        #joystick-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: grid;
-            grid-template-columns: 50px;
-            grid-template-rows: 50px 50px 50px;
-            gap: 10px;
-            justify-items: center;
-            align-items: center;
-        }
+    switch (event.key) {
+        case 'ArrowUp':
+            moveInterval = setInterval(() => moveCharacter('up'), 50);
+            break;
+        case 'ArrowDown':
+            moveInterval = setInterval(() => moveCharacter('down'), 50);
+            break;
+        case 'ArrowLeft':
+            moveInterval = setInterval(() => moveCharacter('left'), 50);
+            break;
+        case 'ArrowRight':
+            moveInterval = setInterval(() => moveCharacter('right'), 50);
+            break;
+    }
+});
 
-        .joystick-btn {
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            font-size: 18px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .joystick-btn:active {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-    </style>
-</head>
-<body>
-    <div class="character-display" id="character-display">
-        <!-- Le personnage sera injecté ici -->
-    </div>
-
-    <!-- Croix de déplacement -->
-    <div id="joystick-container">
-        <button id="up" class="joystick-btn">↑</button>
-        <button id="left" class="joystick-btn">←</button>
-        <button id="right" class="joystick-btn">→</button>
-        <button id="down" class="joystick-btn">↓</button>
-    </div>
-
-    <script>
-        // Fonction pour récupérer les paramètres d'URL
-        function getUrlParameter(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        // Liste des copains avec leurs noms
-        const copains = {
-            "1": "Angle",
-            "2": "Chim",
-            "3": "Zonzon",
-            "4": "Luc",
-            "5": "Mori"
-        };
-
-        // Récupérer les informations sur le personnage
-        const characterId = getUrlParameter('character');
-        const image = getUrlParameter('image');
-
-        // Sélection de l'élément où afficher le personnage
-        const displayElement = document.getElementById('character-display');
-
-        let currentDirection = 'front'; // Position initiale : avant (front)
-
-        if (characterId && image) {
-            // Obtenir le nom du copain en fonction de l'ID
-            const characterName = copains[characterId] || "Copain inconnu";
-
-            // Afficher le personnage sélectionné
-            displayElement.innerHTML = `
-                <img src="${image}" alt="Personnage sélectionné" id="character-image" />
-                <h2>Bienvenue ${characterName}</h2>
-            `;
-        } else {
-            displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
-        }
-
-        // Fonction pour changer l'image en fonction de la direction
-        function updateCharacterImage() {
-            const characterImage = document.getElementById('character-image');
-            let imagePath;
-
-            // Selon la direction, choisir l'image appropriée
-            switch (currentDirection) {
-                case 'front':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
-                    break;
-                case 'back':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png';
-                    break;
-                case 'left':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
-                    break;
-                case 'right':
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
-                    break;
-                default:
-                    imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png'; // Image par défaut
-            }
-
-            // Mise à jour de l'image
-            characterImage.src = imagePath;
-        }
-
-        // Fonction de déplacement du personnage
-        function moveCharacter(direction) {
-            const characterImage = document.getElementById('character-image');
-            if (!characterImage) return; // Assurez-vous que l'image existe avant de la déplacer
-
-            const step = 10; // Distance de déplacement en pixels
-
-            // Obtenir les positions actuelles
-            const currentTop = parseInt(characterImage.style.top || "50%", 10);
-            const currentLeft = parseInt(characterImage.style.left || "50%", 10);
-
-            // Déplacement en fonction de la direction
-            switch (direction) {
-                case 'up':
-                    characterImage.style.top = `${currentTop - step}px`;
-                    currentDirection = 'back'; // Image pour le dos
-                    break;
-                case 'down':
-                    characterImage.style.top = `${currentTop + step}px`;
-                    currentDirection = 'front'; // Image pour l'avant
-                    break;
-                case 'left':
-                    characterImage.style.left = `${currentLeft - step}px`;
-                    currentDirection = 'left'; // Image pour la gauche
-                    break;
-                case 'right':
-                    characterImage.style.left = `${currentLeft + step}px`;
-                    currentDirection = 'right'; // Image pour la droite
-                    break;
-                default:
-                    currentDirection = 'front'; // Si aucune direction définie, image par défaut
-                    break;
-            }
-
-            updateCharacterImage(); // Mise à jour de l'image après le déplacement
-        }
-
-        // Ajouter des événements pour les boutons
-        document.getElementById('up').addEventListener('click', () => moveCharacter('up'));
-        document.getElementById('down').addEventListener('click', () => moveCharacter('down'));
-        document.getElementById('left').addEventListener('click', () => moveCharacter('left'));
-        document.getElementById('right').addEventListener('click', () => moveCharacter('right'));
-
-        // Déplacement en continu avec les touches directionnelles du clavier
-        let moveInterval;
-        window.addEventListener('keydown', (event) => {
-            if (moveInterval) return; // Si un mouvement est déjà en cours, ne pas répéter
-
-            switch (event.key) {
-                case 'ArrowUp':
-                    moveInterval = setInterval(() => moveCharacter('up'), 50);
-                    break;
-                case 'ArrowDown':
-                    moveInterval = setInterval(() => moveCharacter('down'), 50);
-                    break;
-                case 'ArrowLeft':
-                    moveInterval = setInterval(() => moveCharacter('left'), 50);
-                    break;
-                case 'ArrowRight':
-                    moveInterval = setInterval(() => moveCharacter('right'), 50);
-                    break;
-            }
-        });
-
-        window.addEventListener('keyup', () => {
-            clearInterval(moveInterval);
-            moveInterval = null;
-        });
-
-    </script>
-</body>
-</html>
+// Bloquer le défilement de la page avec la molette de la souris
+window.addEventListener('wheel', (event) => {
+    event.preventDefault(); // Empêche le défilement de la page
+}, { passive: false });
