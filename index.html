@@ -20,6 +20,34 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            position: relative; /* On définit le corps comme référence pour le positionnement absolu */
+        }
+
+        /* La maison qui doit être sous le garage mais sur le fond */
+        .maison {
+            position: absolute;
+            bottom: 0; /* Positionnée tout en bas */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%; /* Ajuste la largeur à ton image */
+            height: 300px; /* Taille de la maison à ajuster selon l'image */
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/maison_image.png'); /* Remplacer par l'URL de la maison */
+            background-size: cover;
+            background-position: center;
+            z-index: 1; /* La maison reste en dessous du garage mais au-dessus du fond */
+        }
+
+        /* Garage ou autres éléments qui doivent être au-dessus */
+        .garage {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px; /* Ajuste selon ta taille */
+            height: 200px;
+            background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/garage_image.png'); /* Remplacer par l'URL du garage */
+            background-size: cover;
+            z-index: 2; /* Le garage au-dessus de la maison */
         }
 
         .character-display img {
@@ -30,6 +58,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 3; /* Le personnage au-dessus de la maison et du garage */
         }
 
         #joystick-container {
@@ -42,6 +71,7 @@
             gap: 10px;
             justify-items: center;
             align-items: center;
+            z-index: 4; /* Joystick au-dessus de tout */
         }
 
         .joystick-btn {
@@ -58,19 +88,15 @@
         .joystick-btn:active {
             background-color: rgba(0, 0, 0, 0.8);
         }
-
-        #garage-door {
-            position: absolute;
-            top: 50%; /* Position du garage */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px; /* Taille de la porte */
-            height: 100px; /* Taille de la porte */
-            background-size: cover;
-        }
     </style>
 </head>
 <body>
+    <!-- La maison en bas, sous le garage mais au-dessus du fond -->
+    <div class="maison"></div>
+
+    <!-- Le garage placé au-dessus de la maison -->
+    <div class="garage"></div>
+
     <div class="character-display" id="character-display">
         <!-- Le personnage sera injecté ici -->
     </div>
@@ -251,34 +277,6 @@
         window.addEventListener('wheel', (event) => {
             event.preventDefault();
         }, { passive: false });
-
-        // Gestion de l'ouverture et fermeture de la porte du garage
-        const garageDoor = document.createElement('div');
-        garageDoor.id = "garage-door";
-        garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png)';
-        document.body.appendChild(garageDoor);
-
-        // Zone de détection du garage
-        const garageZone = { left: 40, top: 40, width: 200, height: 200 }; // Définir la zone devant le garage
-
-        function updateGarageDoor() {
-            const characterImage = document.getElementById('character-image');
-            const characterTop = parseInt(characterImage.style.top || "50%", 10);
-            const characterLeft = parseInt(characterImage.style.left || "50%", 10);
-
-            // Vérifier si le personnage est dans la zone du garage
-            if (characterLeft >= garageZone.left && characterLeft <= (garageZone.left + garageZone.width) &&
-                characterTop >= garageZone.top && characterTop <= (garageZone.top + garageZone.height)) {
-                // Ouvrir la porte (image 2 puis 3)
-                garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage2.png)';
-            } else {
-                // Fermer la porte (image 3 puis 2 puis 1)
-                garageDoor.style.backgroundImage = 'url(https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/PGarage1.png)';
-            }
-        }
-
-        setInterval(updateGarageDoor, 50);  // Mettre à jour la porte toutes les 50 ms
-
     </script>
 </body>
 </html>
