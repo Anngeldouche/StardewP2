@@ -235,7 +235,7 @@
 
             updateCharacterImage();
 
-            // Si le personnage se rapproche, ouvre progressivement le garage
+            // Si le personnage est à proximité de la porte, ouvrez-la progressivement
             if (currentTop < 30 && currentLeft < 30) {
                 if (garageState < 3) {
                     garageState++;
