@@ -56,17 +56,17 @@ body {
 
 .door {
     position: absolute;
-    top: 60%;  /* Déplacer la porte plus bas */
-    left: 10%;  /* Placer la porte plus à gauche */
-    transform: translate(-50%, -50%) scale(0.2); /* Réduire la taille de la porte */
+    top: 60%;
+    left: 10%;
+    transform: translate(-50%, -50%) scale(0.2);
     cursor: pointer;
     z-index: 2;
 }
 
 .house-background {
     position: absolute;
-    top: 60%;  /* Même position que la porte */
-    left: 10%;  /* Même position que la porte */
-    transform: translate(-50%, -50%) scale(0.2); /* Même taille que la porte */
-    z-index: 1; /* La maison est derrière la porte */
+    top: 60%;
+    left: 10%;
+    transform: translate(-50%, -50%) scale(0.2);
+    z-index: 1;
 }
