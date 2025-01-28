@@ -17,17 +17,34 @@ const copains = {
 const characterImages = {
     "1": {
         front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png',
-        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copains8B(1)B.png',
         left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png',
         right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png',
     },
     "2": {
-        front: 'https://example.com/chim_front.png',
-        back: 'https://example.com/chim_back.png',
-        left: 'https://example.com/chim_left.png',
-        right: 'https://example.com/chim_right.png',
+        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2).png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)B.png',
+        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)G.png',
+        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)D.png',
     },
-    // Ajoutez les autres personnages ici
+    "3": {
+        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3).png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)B.png',
+        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)G.png',
+        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)D.png',
+    },
+    "4": {
+        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4).png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)B.png',
+        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)G.png',
+        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)D.png',
+    },
+    "5": {
+        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5).png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)B.png',
+        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)G.png',
+        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)D.png',
+    }
 };
 
 const characterId = getUrlParameter('character');
@@ -76,19 +93,19 @@ function moveCharacter() {
     if (isUpPressed && isLeftPressed) {
         characterImage.style.top = `${currentTop - step}%`;
         characterImage.style.left = `${currentLeft - step}%`;
-        currentDirection = 'up-left';
+        currentDirection = 'left';
     } else if (isUpPressed && isRightPressed) {
         characterImage.style.top = `${currentTop - step}%`;
         characterImage.style.left = `${currentLeft + step}%`;
-        currentDirection = 'up-right';
+        currentDirection = 'right';
     } else if (isDownPressed && isLeftPressed) {
         characterImage.style.top = `${currentTop + step}%`;
         characterImage.style.left = `${currentLeft - step}%`;
-        currentDirection = 'down-left';
+        currentDirection = 'left';
     } else if (isDownPressed && isRightPressed) {
         characterImage.style.top = `${currentTop + step}%`;
         characterImage.style.left = `${currentLeft + step}%`;
-        currentDirection = 'down-right';
+        currentDirection = 'right';
     } else if (isUpPressed) {
         characterImage.style.top = `${currentTop - step}%`;
         currentDirection = 'back';
