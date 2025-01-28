@@ -54,7 +54,7 @@ const displayElement = document.getElementById('character-display');
 if (characterId && image) {
     const characterName = copains[characterId] || "Copain inconnu";
     displayElement.innerHTML = `
-        <img src="${image}" alt="Personnage sélectionné" id="character-image" />
+        <img src="${image}" alt="Personnage sélectionné" id="character-image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
         <h2>Bienvenue ${characterName}</h2>
     `;
 } else {
@@ -75,7 +75,7 @@ function updateCharacterImage() {
     if (!characterImage || !characterId || !characterImages[characterId]) return;
 
     const imagePaths = characterImages[characterId];
-    let imagePath = imagePaths[currentDirection] || imagePaths.front;
+    const imagePath = imagePaths[currentDirection] || imagePaths.front;
 
     characterImage.src = imagePath;
 }
@@ -85,37 +85,24 @@ function moveCharacter() {
     const characterImage = document.getElementById('character-image');
     if (!characterImage) return;
 
-    const step = 1; // Pas de déplacement
+    const step = 2; // Pas de déplacement en pixels
 
-    const currentTop = parseInt(characterImage.style.top || "50%", 10);
-    const currentLeft = parseInt(characterImage.style.left || "50%", 10);
+    const currentTop = parseFloat(characterImage.style.top || "50%");
+    const currentLeft = parseFloat(characterImage.style.left || "50%");
 
-    if (isUpPressed && isLeftPressed) {
-        characterImage.style.top = `${currentTop - step}%`;
-        characterImage.style.left = `${currentLeft - step}%`;
-        currentDirection = 'left';
-    } else if (isUpPressed && isRightPressed) {
-        characterImage.style.top = `${currentTop - step}%`;
-        characterImage.style.left = `${currentLeft + step}%`;
-        currentDirection = 'right';
-    } else if (isDownPressed && isLeftPressed) {
-        characterImage.style.top = `${currentTop + step}%`;
-        characterImage.style.left = `${currentLeft - step}%`;
-        currentDirection = 'left';
-    } else if (isDownPressed && isRightPressed) {
-        characterImage.style.top = `${currentTop + step}%`;
-        characterImage.style.left = `${currentLeft + step}%`;
-        currentDirection = 'right';
-    } else if (isUpPressed) {
+    if (isUpPressed) {
         characterImage.style.top = `${currentTop - step}%`;
         currentDirection = 'back';
-    } else if (isDownPressed) {
+    }
+    if (isDownPressed) {
         characterImage.style.top = `${currentTop + step}%`;
         currentDirection = 'front';
-    } else if (isLeftPressed) {
+    }
+    if (isLeftPressed) {
         characterImage.style.left = `${currentLeft - step}%`;
         currentDirection = 'left';
-    } else if (isRightPressed) {
+    }
+    if (isRightPressed) {
         characterImage.style.left = `${currentLeft + step}%`;
         currentDirection = 'right';
     }
@@ -123,7 +110,7 @@ function moveCharacter() {
     updateCharacterImage();
 }
 
-// Écouteurs d'événements pour les touches
+// Gestion des touches
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'ArrowUp':
@@ -157,16 +144,11 @@ window.addEventListener('keyup', (event) => {
             isRightPressed = false;
             break;
     }
-    moveCharacter();
 });
 
 // Empêcher le défilement par défaut avec les flèches
 window.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
         event.preventDefault();
     }
 });
-
-window.addEventListener('wheel', (event) => {
-    event.preventDefault();
-}, { passive: false });
