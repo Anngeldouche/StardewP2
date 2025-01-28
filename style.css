@@ -7,8 +7,14 @@ body {
     font-family: 'Avenir Next', 'Avenir', 'Arial', sans-serif;
     padding: 20px;
     min-height: 100vh;
-    background-image: url('background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/FondWds.png');
-');
+    background-image: url('https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Decorsbits/FondWds.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    overflow: hidden;
+}
+;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
