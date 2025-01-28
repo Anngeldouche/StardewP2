@@ -21,30 +21,7 @@ const characterImages = {
         left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png',
         right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png',
     },
-    "2": {
-        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2).png',
-        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)B.png',
-        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)G.png',
-        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(2)D.png',
-    },
-    "3": {
-        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3).png',
-        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)B.png',
-        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)G.png',
-        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(3)D.png',
-    },
-    "4": {
-        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4).png',
-        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)B.png',
-        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)G.png',
-        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(4)D.png',
-    },
-    "5": {
-        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5).png',
-        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)B.png',
-        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)G.png',
-        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(5)D.png',
-    }
+    // ... (Autres personnages)
 };
 
 const characterId = getUrlParameter('character');
@@ -61,15 +38,12 @@ if (characterId && image) {
     displayElement.innerHTML = `<p>Aucun personnage sélectionné. Veuillez revenir à la page précédente et en choisir un.</p>`;
 }
 
-// --- Code ajouté pour les déplacements --- //
-
 let currentDirection = 'front';
 let isUpPressed = false;
 let isDownPressed = false;
 let isLeftPressed = false;
 let isRightPressed = false;
 
-// Fonction pour changer l'image en fonction de la direction
 function updateCharacterImage() {
     const characterImage = document.getElementById('character-image');
     if (!characterImage || !characterId || !characterImages[characterId]) return;
@@ -80,30 +54,29 @@ function updateCharacterImage() {
     characterImage.src = imagePath;
 }
 
-// Fonction de déplacement du personnage
 function moveCharacter() {
     const characterImage = document.getElementById('character-image');
     if (!characterImage) return;
 
-    const step = 2; // Pas de déplacement en pixels
+    const step = 10; // Déplacement en pixels
 
     const currentTop = parseFloat(characterImage.style.top || "50%");
     const currentLeft = parseFloat(characterImage.style.left || "50%");
 
     if (isUpPressed) {
-        characterImage.style.top = `${currentTop - step}%`;
+        characterImage.style.top = `${currentTop - step}px`;
         currentDirection = 'back';
     }
     if (isDownPressed) {
-        characterImage.style.top = `${currentTop + step}%`;
+        characterImage.style.top = `${currentTop + step}px`;
         currentDirection = 'front';
     }
     if (isLeftPressed) {
-        characterImage.style.left = `${currentLeft - step}%`;
+        characterImage.style.left = `${currentLeft - step}px`;
         currentDirection = 'left';
     }
     if (isRightPressed) {
-        characterImage.style.left = `${currentLeft + step}%`;
+        characterImage.style.left = `${currentLeft + step}px`;
         currentDirection = 'right';
     }
 
@@ -127,6 +100,7 @@ window.addEventListener('keydown', (event) => {
             break;
     }
     moveCharacter();
+    event.preventDefault(); // Empêcher le défilement par défaut
 });
 
 window.addEventListener('keyup', (event) => {
@@ -143,12 +117,5 @@ window.addEventListener('keyup', (event) => {
         case 'ArrowRight':
             isRightPressed = false;
             break;
-    }
-});
-
-// Empêcher le défilement par défaut avec les flèches
-window.addEventListener('keydown', (event) => {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-        event.preventDefault();
     }
 });
