@@ -13,6 +13,23 @@ const copains = {
     "5": "Mori"
 };
 
+// Dictionnaire des chemins d'images par personnage
+const characterImages = {
+    "1": {
+        front: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png',
+        back: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png',
+        left: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png',
+        right: 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png',
+    },
+    "2": {
+        front: 'https://example.com/chim_front.png',
+        back: 'https://example.com/chim_back.png',
+        left: 'https://example.com/chim_left.png',
+        right: 'https://example.com/chim_right.png',
+    },
+    // Ajoutez les autres personnages ici
+};
+
 const characterId = getUrlParameter('character');
 const image = getUrlParameter('image');
 const displayElement = document.getElementById('character-display');
@@ -38,24 +55,10 @@ let isRightPressed = false;
 // Fonction pour changer l'image en fonction de la direction
 function updateCharacterImage() {
     const characterImage = document.getElementById('character-image');
-    let imagePath;
+    if (!characterImage || !characterId || !characterImages[characterId]) return;
 
-    switch (currentDirection) {
-        case 'front':
-            imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
-            break;
-        case 'back':
-            imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)B.png';
-            break;
-        case 'left':
-            imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)G.png';
-            break;
-        case 'right':
-            imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1)D.png';
-            break;
-        default:
-            imagePath = 'https://raw.githubusercontent.com/Anngeldouche/StardewP2/main/Copainbits/Copains8B(1).png';
-    }
+    const imagePaths = characterImages[characterId];
+    let imagePath = imagePaths[currentDirection] || imagePaths.front;
 
     characterImage.src = imagePath;
 }
