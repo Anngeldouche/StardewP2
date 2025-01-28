@@ -14,13 +14,6 @@ body {
     position: relative;
     overflow: hidden;
 }
-;
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    position: relative;
-    overflow: hidden;
-}
 
 .character-display img {
     width: 100px; /* Taille ajustée pour s'intégrer au jeu */
